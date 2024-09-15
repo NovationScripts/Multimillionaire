@@ -154,7 +154,7 @@
     address referrer; // Address of the player who referred this player
     uint256 referralEarnings; // Amount earned by the player from referrals
     uint256 depositIndex;  // Индекс депозита, который игрок должен внести следующим
-    uint256 deposit; // Amount of ether deposited by the player
+    uint256 deposit; // Amount of token deposited by the player
     bool madeDeposit;  // Флаг, указывающий, сделал ли игрок депозит
     bool receivedPayout;  // Флаг, указывающий, получил ли игрок выплату
     bool hasFinished; // Flag to track whether the player has finished the game
