@@ -9,7 +9,7 @@
     function approve(address spender, uint256 amount) external returns (bool);
     }
 
-   contract GetEthTop {
+   contract Multimillionaire {
    // Constants for fund distribution
    uint256 public constant CONTRACT_COMMISSION = 5; // Contract commission percentage, The contract owner's earnings without token rewards.
    uint256 public constant PAYOUT_MULTIPLIER = 109; // Payout multiplier
