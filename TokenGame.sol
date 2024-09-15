@@ -425,12 +425,7 @@
     // ////////////////////////////////////////////////////
 
 
-    // Modifier to check if a payout is available for the calling player
-    modifier canRequestPayout() {
-    // Check if the player is eligible for a payout
-    require(isPayoutAvailableFor(msg.sender), "Payout is not available");
-    _; // Continue execution of the function
-    }
+
 
      function changePayoutAttemptTime(uint256 newInterval) public onlyOwner {
     payoutAttemptInterval = newInterval;
