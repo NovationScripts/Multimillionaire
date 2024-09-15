@@ -319,8 +319,8 @@
     // Увеличиваем количество выплат для текущего депозита
     payoutsPerDeposit[player.depositIndex]++;
 
-    // Если это девятая выплата для текущего депозита
-    if (payoutsPerDeposit[player.depositIndex] % 9 == 0) {
+    // Проверяем соотношение игроков с депозитами и ожидающих выплату
+    if (playersWithDeposits[player.depositIndex] > 0 && playersWaitingForPayout[player.depositIndex] >= playersWithDeposits[player.depositIndex] * 15) {
         // Выплата из резервного бюджета
         require(reserveBudget >= payout, "Insufficient reserve budget");
         reserveBudget -= payout;
@@ -336,25 +336,6 @@
         emit ReceivedPayment(msg.sender, payout);
     }
 
-    /*
-        // Проверяем соотношение игроков с депозитами и ожидающих выплату
-    if (playersWithDeposits[player.depositIndex] > playersWaitingForPayout[player.depositIndex] * 9) {
-        // Выплата из резервного бюджета
-        require(reserveBudget >= payout, "Insufficient reserve budget");
-        reserveBudget -= payout;
-        require(token.transfer(msg.sender, payout), "Token transfer from reserve failed");
-        emit ReservePaymentMade(msg.sender, payout);
-    } else {
-        // Проверяем, достаточно ли средств в общей сумме депозитов для выплаты
-        require(totalDepositsPerLevel[player.depositIndex] >= payout, "Insufficient deposit budget");
-
-        // Выплачиваем игроку из общей суммы депозитов
-        totalDepositsPerLevel[player.depositIndex] -= payout;
-        require(token.transfer(msg.sender, payout), "Token transfer failed");
-        emit ReceivedPayment(msg.sender, payout);
-    }
-   */
-
     // Обновляем флаги депозита и выплаты
     player.madeDeposit = false;
     player.receivedPayout = true;
@@ -366,6 +347,7 @@
         player.hasFinished = true;  // Игрок завершил все депозиты
     }
     }
+
 
 
 
