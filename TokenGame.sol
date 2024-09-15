@@ -16,7 +16,7 @@
    uint256 public constant REFERRAL_COMMISSION = 5; // Referral commission percentage
    uint256 public reserveBudget; // Переменная для резервного бюджета
 
-   uint256; //
+   uint256; // ?
    
    // Contract state variables
    IERC20 public token; // ERC-20
@@ -25,7 +25,6 @@
    uint256 public totalReferralWithdrawals = 0; // Total referral withdrawals
    uint256 public totalPlayerCount; // Total number of players counter
    uint256 public payoutAttemptInterval = 30 hours;  //
-   uint256; // ?
 
 	constructor(IERC20 _token) {
     owner = msg.sender; // Назначаем владельца контракта
