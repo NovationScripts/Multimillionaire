@@ -14,9 +14,10 @@
    uint256 public constant CONTRACT_COMMISSION = 5; // Contract commission percentage, The contract owner's earnings without token rewards.
    uint256 public constant PAYOUT_MULTIPLIER = 109; // Payout multiplier
    uint256 public constant REFERRAL_COMMISSION = 5; // Referral commission percentage
+   uint256 public ratioMultiplier = 13;
    uint256 public reserveBudget; // Переменная для резервного бюджета
+   mapping(uint256 => uint256) public depositBudgets; // Бюджеты для депозитов
 
-   uint256; // ?
    
    // Contract state variables
    IERC20 public token; // ERC-20
@@ -140,7 +141,7 @@
 
 
 
-    uint256; // ?
+
 
 
     // Mapping to track total payouts for each player
@@ -307,7 +308,7 @@
     
 
 
- function processPayments() internal onlyPlayer {
+    function processPayments() internal onlyPlayer {
     Player storage player = players[msg.sender];
 
     // Проверяем, что игрок внёс депозит и ещё не получил выплату
@@ -318,7 +319,7 @@
     uint256 payout = player.deposit * PAYOUT_MULTIPLIER / 100;
 
     // Проверяем соотношение игроков с депозитами и ожидающих выплату
-    if (playersWithDeposits[player.depositIndex] > 0 && playersWaitingForPayout[player.depositIndex] >= playersWithDeposits[player.depositIndex] * 13) {
+    if (playersWithDeposits[player.depositIndex] > 0 && playersWaitingForPayout[player.depositIndex] >= playersWithDeposits[player.depositIndex] * ratioMultiplier) {
         // Если это девятая успешная выплата
         if (payoutsPerDeposit[player.depositIndex] % 9 == 0) {
             // Проверяем, достаточно ли средств в бюджете депозита для девятой выплаты
@@ -369,6 +370,7 @@
         player.hasFinished = true;  // Игрок завершил все депозиты
     }
     }
+
 
 
 
@@ -437,7 +439,11 @@
     payoutAttemptInterval = newInterval;
     }
     
-
+    // Функция для изменения коэффициента, доступная только владельцу контракта
+    function setRatioMultiplier(uint256 _newMultiplier) external onlyOwner {
+    require(_newMultiplier > 0, "Multiplier must be greater than 0");
+    ratioMultiplier = _newMultiplier;
+    }
 
     // Modifier to ensure that only the contract owner can call certain functions
     modifier onlyOwner() {
