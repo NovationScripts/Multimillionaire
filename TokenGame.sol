@@ -306,6 +306,7 @@
 
     
 
+
     function processPayments() internal onlyPlayer {
     Player storage player = players[msg.sender];
 
@@ -321,16 +322,32 @@
 
     // Проверяем соотношение игроков с депозитами и ожидающих выплату
     if (playersWithDeposits[player.depositIndex] > 0 && playersWaitingForPayout[player.depositIndex] >= playersWithDeposits[player.depositIndex] * 15) {
-        // Выплата из резервного бюджета
-        require(reserveBudget >= payout, "Insufficient reserve budget");
-        reserveBudget -= payout;
-        require(token.transfer(msg.sender, payout), "Token transfer from reserve failed");
-        emit ReservePaymentMade(msg.sender, payout);
+        // Если это девятая успешная выплата
+        if (payoutsPerDeposit[player.depositIndex] % 9 == 0) {
+            // Проверяем, достаточно ли средств в бюджете депозита для девятой выплаты
+            require(depositBudgets[player.depositIndex] >= payout, "Insufficient deposit budget for ninth payout");
+
+            // Выплата из резервного бюджета
+            require(reserveBudget >= payout, "Insufficient reserve budget");
+            reserveBudget -= payout;
+            require(token.transfer(msg.sender, payout), "Token transfer from reserve failed");
+            emit ReservePaymentMade(msg.sender, payout);
+
+            // Не вычитаем средства из бюджета депозита, так как девятая выплата из резерва
+        } else {
+            // Проверяем, достаточно ли средств в бюджете депозита для обычной выплаты
+            require(depositBudgets[player.depositIndex] >= payout, "Insufficient deposit budget");
+
+            // Выплачиваем игроку из бюджета депозита
+            depositBudgets[player.depositIndex] -= payout;
+            require(token.transfer(msg.sender, payout), "Token transfer failed");
+            emit ReceivedPayment(msg.sender, payout);
+        }
     } else {
         // Проверяем, достаточно ли средств в бюджете депозита для выплаты
         require(depositBudgets[player.depositIndex] >= payout, "Insufficient deposit budget");
 
-        // Выплачиваем игроку
+        // Выплачиваем игроку из бюджета депозита
         depositBudgets[player.depositIndex] -= payout;
         require(token.transfer(msg.sender, payout), "Token transfer failed");
         emit ReceivedPayment(msg.sender, payout);
@@ -347,7 +364,6 @@
         player.hasFinished = true;  // Игрок завершил все депозиты
     }
     }
-
 
 
 
