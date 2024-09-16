@@ -385,12 +385,7 @@
     player.madeDeposit = false;
     player.receivedPayout = true;
 
-    // Уменьшаем количество ожидающих выплату игроков
-    playersWaitingForPayout[player.depositIndex]--;
-    if (player.depositIndex == 0) {
-    playersWithDeposits[player.depositIndex]--;
-    }
-
+    
     // Уменьшаем количество ожидающих выплату игроков
     playersWaitingForPayout[player.depositIndex]--;
     if (player.depositIndex == 0) {
