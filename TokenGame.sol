@@ -478,7 +478,10 @@
     return totalPlayerCount;
     }
 
-  
+    // Функция для получения текущего значения ratioMultiplier
+    function getRatioMultiplier() external view returns (uint256) {
+    return ratioMultiplier;
+    }
 
     // Функция для получения данных о текущем депозите игрока
     function getCurrentDepositData() external view returns (uint256 depositAmount, uint256 depositIndex, uint256 budget) {
