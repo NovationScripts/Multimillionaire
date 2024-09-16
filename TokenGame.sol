@@ -14,7 +14,7 @@
    uint256 public constant CONTRACT_COMMISSION = 5; // Contract commission percentage, The contract owner's earnings without token rewards.
    uint256 public constant PAYOUT_MULTIPLIER = 109; // Payout multiplier
    uint256 public constant REFERRAL_COMMISSION = 5; // Referral commission percentage
-   uint256 public ratioMultiplier = 13;
+   uint256 public ratioMultiplier = 9;
    uint256 public reserveBudget; // Переменная для резервного бюджета
    mapping(uint256 => uint256) public depositBudgets; // Бюджеты для депозитов
 
