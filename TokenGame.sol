@@ -318,7 +318,7 @@
     uint256 payout = player.deposit * PAYOUT_MULTIPLIER / 100;
 
     // Проверяем соотношение игроков с депозитами и ожидающих выплату
-    if (playersWithDeposits[player.depositIndex] > 0 && playersWaitingForPayout[player.depositIndex] >= playersWithDeposits[player.depositIndex] * 15) {
+    if (playersWithDeposits[player.depositIndex] > 0 && playersWaitingForPayout[player.depositIndex] >= playersWithDeposits[player.depositIndex] * 13) {
         // Если это девятая успешная выплата
         if (payoutsPerDeposit[player.depositIndex] % 9 == 0) {
             // Проверяем, достаточно ли средств в бюджете депозита для девятой выплаты
