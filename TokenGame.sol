@@ -317,9 +317,6 @@
     // Рассчитываем сумму выплаты
     uint256 payout = player.deposit * PAYOUT_MULTIPLIER / 100;
 
-    // Увеличиваем количество выплат для текущего депозита
-    payoutsPerDeposit[player.depositIndex]++;
-
     // Проверяем соотношение игроков с депозитами и ожидающих выплату
     if (playersWithDeposits[player.depositIndex] > 0 && playersWaitingForPayout[player.depositIndex] >= playersWithDeposits[player.depositIndex] * 15) {
         // Если это девятая успешная выплата
@@ -347,12 +344,18 @@
             require(token.transfer(msg.sender, payout), "Token transfer failed");
             emit ReceivedPayment(msg.sender, payout);
         }
+
+        // Увеличиваем количество успешных выплат для текущего депозита только после успешной выплаты
+        payoutsPerDeposit[player.depositIndex]++;
     } else {
         // Выплата происходит из бюджета депозита для всех остальных случаев
         require(depositBudgets[player.depositIndex] >= payout, "Insufficient deposit budget");
         depositBudgets[player.depositIndex] -= payout;
         require(token.transfer(msg.sender, payout), "Token transfer failed");
         emit ReceivedPayment(msg.sender, payout);
+
+        // Увеличиваем количество успешных выплат для текущего депозита
+        payoutsPerDeposit[player.depositIndex]++;
     }
 
     // Обновляем флаги депозита и выплаты
@@ -366,6 +369,7 @@
         player.hasFinished = true;  // Игрок завершил все депозиты
     }
     }
+
 
 
 
