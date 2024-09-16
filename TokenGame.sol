@@ -238,6 +238,11 @@
     // Переводим токены на контракт
     require(token.transferFrom(msg.sender, address(this), depositAmount), "Token transfer failed");
 
+    // Увеличиваем количество игроков с депозитами на этом уровне депозита
+    if (!player.madeDeposit) {
+        playersWithDeposits[player.depositIndex]++;
+    }
+
     // Рассчёт комиссии контракта и реферальной комиссии
     uint256 contractCommission = (depositAmount * CONTRACT_COMMISSION) / 100;
     uint256 referralFee = (depositAmount * REFERRAL_COMMISSION) / 100;
@@ -256,6 +261,9 @@
 
     // Сохраняем сумму депозита
     player.deposit += depositAmount;
+
+    // Когда игрок сделал депозит, добавляем его в список ожидающих
+    playersWaitingForPayout[player.depositIndex]++;
 
     // Получаем адрес реферера
     address referrer = player.referrer;
@@ -376,6 +384,18 @@
     // Обновляем флаги депозита и выплаты
     player.madeDeposit = false;
     player.receivedPayout = true;
+
+    // Уменьшаем количество ожидающих выплату игроков
+    playersWaitingForPayout[player.depositIndex]--;
+    if (player.depositIndex == 0) {
+    playersWithDeposits[player.depositIndex]--;
+    }
+
+    // Уменьшаем количество ожидающих выплату игроков
+    playersWaitingForPayout[player.depositIndex]--;
+    if (player.depositIndex == 0) {
+    playersWithDeposits[player.depositIndex]--;
+    }
 
     // Переход на следующий депозит
     if (player.depositIndex < DEPOSIT_AMOUNTS.length - 1) {
