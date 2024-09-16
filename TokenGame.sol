@@ -1,4 +1,4 @@
-  // SPDX-License-Identifier: MIT
+ // SPDX-License-Identifier: MIT
 
     pragma solidity ^0.8.0;
 
@@ -15,8 +15,13 @@
    uint256 public constant PAYOUT_MULTIPLIER = 109; // Payout multiplier
    uint256 public constant REFERRAL_COMMISSION = 5; // Referral commission percentage
    uint256 public ratioMultiplier = 9;
+   uint256 public contractEarnings; // Переменная для хранения заработков контракта
    uint256 public reserveBudget; // Переменная для резервного бюджета
+   mapping(uint256 => uint256) public playersWithDeposits;
+   mapping(uint256 => uint256) public playersWaitingForPayout;
+   mapping(uint256 => uint256) public payoutsPerDeposit;
    mapping(uint256 => uint256) public depositBudgets; // Бюджеты для депозитов
+   uint256 public totalDepositsCount;
 
    
    // Contract state variables
@@ -195,6 +200,9 @@
 
     // Вызываем событие регистрации
     emit Registered(msg.sender, _referrer);
+
+
+
     }
 
     // ////////////////////////////////////////////////////////
@@ -234,8 +242,10 @@
     uint256 contractCommission = (depositAmount * CONTRACT_COMMISSION) / 100;
     uint256 referralFee = (depositAmount * REFERRAL_COMMISSION) / 100;
 
-    // Обновляем глобальный бюджет для текущего депозита (только один раз)
+     // Обновляем бюджет депозита
     depositBudgets[player.depositIndex] += (depositAmount - referralFee - contractCommission);
+    totalDepositsCount++; // Увеличиваем количество депозитов
+
 
     // Устанавливаем флаг "сделал депозит"
     player.madeDeposit = true;
@@ -281,7 +291,7 @@
     }
 
 
-    function requestPayout() external canRequestPayout {
+    function requestPayout() external {
     Player storage player = players[msg.sender];
 
     // Проверяем, доступна ли выплата
@@ -294,6 +304,8 @@
     // Выполняем выплату
     processPayments();
     }
+
+
 
 
 	function reduceWaitingTime(Player storage player) internal {
@@ -320,10 +332,14 @@
 
     // Проверяем соотношение игроков с депозитами и ожидающих выплату
     if (playersWithDeposits[player.depositIndex] > 0 && playersWaitingForPayout[player.depositIndex] >= playersWithDeposits[player.depositIndex] * ratioMultiplier) {
+        
         // Если это девятая успешная выплата
         if (payoutsPerDeposit[player.depositIndex] % 9 == 0) {
             // Проверяем, достаточно ли средств в бюджете депозита для девятой выплаты
-            if (depositBudgets[player.depositIndex] < payout) {
+            if (depositBudgets[player.depositIndex] >= payout) {
+                // Выплачиваем из бюджета депозита
+                depositBudgets[player.depositIndex] -= payout;
+            } else {
                 // Если недостаточно средств, обновляем время ожидания
                 reduceWaitingTime(player);
                 return;
@@ -334,8 +350,6 @@
             reserveBudget -= payout;
             require(token.transfer(msg.sender, payout), "Token transfer from reserve failed");
             emit ReservePaymentMade(msg.sender, payout);
-
-            // Не вычитаем средства из бюджета депозита, так как девятая выплата из резерва
         } else {
             // Проверяем, достаточно ли средств в бюджете депозита для обычной выплаты
             require(depositBudgets[player.depositIndex] >= payout, "Insufficient deposit budget");
@@ -370,6 +384,7 @@
         player.hasFinished = true;  // Игрок завершил все депозиты
     }
     }
+
 
 
 
@@ -425,7 +440,7 @@
     contractEarnings = 0;
 
     // Логируем событие вывода
-    emit OwnerWithdrawal(owner, withdrawalAmount, 0); // "0", так как редистрибуции больше нет
+    emit OwnerWithdrawal(owner, withdrawalAmount); 
      }
     
     
@@ -519,10 +534,10 @@
     // Функция для получения бюджетов всех депозитов
     function getBudgetsByDeposit() public view returns (uint256[] memory) {
     // Инициализируем массив для хранения бюджетов каждого депозита
-    uint256[] memory budgets = new uint256[](depositBudgets.length);
+    uint256[] memory budgets = new uint256[](totalDepositsCount);
 
     // Итерируем по каждому депозиту и сохраняем его бюджет в массив
-    for (uint256 i = 0; i < depositBudgets.length; i++) {
+    for (uint256 i = 0; i < totalDepositsCount; i++) {
         budgets[i] = depositBudgets[i]; // Сохраняем бюджет депозита
     }
 
@@ -581,7 +596,7 @@
     
     
      // Events for logging actions in the contract
-     event Registered(address indexed player, address indexed referrer, uint256 depositIndex); // Triggered when a player registers
+     event Registered(address indexed player, address indexed referrer); // Triggered when a player registers
      event DepositMade(address indexed player, uint256 depositIndex); // Triggered when a player makes a deposit
      event ReceivedPayment(address indexed player, uint256 amount); // Triggered when a player receives a payment
      event ReservePaymentMade(address indexed player, uint256 amount); // Вызов при выплате из резервного бюджета
@@ -591,7 +606,3 @@
     
     
     }
-
-
-    
-    
