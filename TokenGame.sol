@@ -325,7 +325,11 @@
         // Если это девятая успешная выплата
         if (payoutsPerDeposit[player.depositIndex] % 9 == 0) {
             // Проверяем, достаточно ли средств в бюджете депозита для девятой выплаты
-            require(depositBudgets[player.depositIndex] >= payout, "Insufficient deposit budget for ninth payout");
+            if (depositBudgets[player.depositIndex] < payout) {
+                // Если недостаточно средств, обновляем время ожидания
+                reduceWaitingTime(player);
+                return;
+            }
 
             // Выплата из резервного бюджета
             require(reserveBudget >= payout, "Insufficient reserve budget");
@@ -361,7 +365,8 @@
     } else {
         player.hasFinished = true;  // Игрок завершил все депозиты
     }
-}
+    }
+
 
 
 
