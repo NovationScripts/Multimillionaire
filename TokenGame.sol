@@ -307,7 +307,7 @@
     
 
 
-    function processPayments() internal onlyPlayer {
+ function processPayments() internal onlyPlayer {
     Player storage player = players[msg.sender];
 
     // Проверяем, что игрок внёс депозит и ещё не получил выплату
@@ -344,10 +344,8 @@
             emit ReceivedPayment(msg.sender, payout);
         }
     } else {
-        // Проверяем, достаточно ли средств в бюджете депозита для выплаты
+        // Выплата происходит из бюджета депозита для всех остальных случаев
         require(depositBudgets[player.depositIndex] >= payout, "Insufficient deposit budget");
-
-        // Выплачиваем игроку из бюджета депозита
         depositBudgets[player.depositIndex] -= payout;
         require(token.transfer(msg.sender, payout), "Token transfer failed");
         emit ReceivedPayment(msg.sender, payout);
@@ -363,7 +361,8 @@
     } else {
         player.hasFinished = true;  // Игрок завершил все депозиты
     }
-    }
+}
+
 
 
 
