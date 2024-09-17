@@ -11,9 +11,9 @@
 
    contract Multimillionaire {
    // Constants for fund distribution
-   uint256 public constant CONTRACT_COMMISSION = 5; // Contract commission percentage, The contract owner's earnings without token rewards.
-   uint256 public constant PAYOUT_MULTIPLIER = 109; // Payout multiplier
-   uint256 public constant REFERRAL_COMMISSION = 5; // Referral commission percentage
+   uint256 public constant contractCommission = 5; // Contract commission percentage, The contract owner's earnings without token rewards.
+   uint256 public constant referralCommission = 5; // Referral commission percentage
+   uint256 public constant payoutMultiplier = 109; // Payout multiplier
    uint256 public ratioMultiplier = 9;
    uint256 public contractEarnings; // Переменная для хранения заработков контракта
    uint256 public reserveBudget; // Переменная для резервного бюджета
@@ -242,8 +242,8 @@
 
     
     // Рассчёт комиссии контракта и реферальной комиссии
-    uint256 commission = (depositAmount * contractCommission) / 100;
-    uint256 referralFee = (depositAmount * REFERRAL_COMMISSION) / 100;
+    contractEarnings += (depositAmount * contractCommission) / 100;
+    uint256 referralFee = (depositAmount * referralCommission) / 100;
 
      // Обновляем бюджет депозита
     depositBudgets[player.depositIndex] += (depositAmount - referralFee - contractCommission);
@@ -285,7 +285,7 @@
     Player storage player = players[playerAddress];
 
     // Рассчитываем сумму выплаты
-    uint256 payout = player.deposit * PAYOUT_MULTIPLIER / 100;
+    uint256 payout = player.deposit * payoutMultiplier / 100;
 
     // Проверяем, достаточно ли средств в бюджете депозита и прошло ли время ожидания
     bool isBudgetAvailable = depositBudgets[player.depositIndex] >= payout;
@@ -335,7 +335,7 @@
     require(!player.receivedPayout, "Payout already received");
 
     // Рассчитываем сумму выплаты
-    uint256 payout = player.deposit * PAYOUT_MULTIPLIER / 100;
+    uint256 payout = player.deposit * payoutMultiplier / 100;
 
    
    // Получаем количество игроков с депозитами и ожидающих выплату
@@ -475,6 +475,7 @@
     ratioMultiplier = _newMultiplier;
     }
 
+    
 
     // Функция для пополнения резервного бюджета
     function depositToReserve(uint256 amount) external onlyOwner {
@@ -588,7 +589,7 @@
     // Function to get the contract commission percentage.
     function getContractEarningsPercentage() public pure returns (uint256) {
     // Return the constant value of the contract commission.
-    return CONTRACT_COMMISSION;
+    return contractCommission;
     }
 
     // Function to get the total earnings of the contract.
@@ -600,7 +601,7 @@
     // Function to get the referral earnings percentage.
     function getReferralEarningsPercentage() public pure returns (uint256) {
     // Return the constant value of the referral commission.
-    return REFERRAL_COMMISSION;
+    return referralCommission;
     }
 
      // Function to retrieve a player's referral earnings.
