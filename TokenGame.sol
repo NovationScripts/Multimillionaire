@@ -1,4 +1,4 @@
- // SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
     pragma solidity ^0.8.0;
 
@@ -17,12 +17,11 @@
    uint256 public ratioMultiplier = 9;
    uint256 public contractEarnings; // Переменная для хранения заработков контракта
    uint256 public reserveBudget; // Переменная для резервного бюджета
-   mapping(uint256 => uint256) public playersWithDeposits;
-   mapping(uint256 => uint256) public playersWaitingForPayout;
    mapping(uint256 => uint256) public payoutsPerDeposit;
    mapping(uint256 => uint256) public depositBudgets; // Бюджеты для депозитов
    uint256 public totalDepositsCount;
 
+   address[] public playersArray; // Массив для хранения всех адресов игроков
    
    // Contract state variables
    IERC20 public token; // ERC-20
@@ -198,6 +197,9 @@
     player.madeDeposit = false;  // Флаг депозита
     player.receivedPayout = false;  // Флаг выплаты
 
+
+    playersArray.push(msg.sender); // Добавляем игрока в массив
+
     // Вызываем событие регистрации
     emit Registered(msg.sender, _referrer);
 
@@ -238,11 +240,7 @@
     // Переводим токены на контракт
     require(token.transferFrom(msg.sender, address(this), depositAmount), "Token transfer failed");
 
-    // Увеличиваем количество игроков с депозитами на этом уровне депозита
-    if (!player.madeDeposit) {
-        playersWithDeposits[player.depositIndex]++;
-    }
-
+    
     // Рассчёт комиссии контракта и реферальной комиссии
     uint256 contractCommission = (depositAmount * CONTRACT_COMMISSION) / 100;
     uint256 referralFee = (depositAmount * REFERRAL_COMMISSION) / 100;
@@ -262,9 +260,7 @@
     // Сохраняем сумму депозита
     player.deposit += depositAmount;
 
-    // Когда игрок сделал депозит, добавляем его в список ожидающих
-    playersWaitingForPayout[player.depositIndex]++;
-
+    
     // Получаем адрес реферера
     address referrer = player.referrer;
 
@@ -338,8 +334,13 @@
     // Рассчитываем сумму выплаты
     uint256 payout = player.deposit * PAYOUT_MULTIPLIER / 100;
 
+   
+   // Получаем количество игроков с депозитами и ожидающих выплату
+    uint256 playersWithDepositsCount = countPlayersWithDeposits(player.depositIndex);
+    uint256 playersWaitingForPayoutCount = countPlayersWaitingForPayout(player.depositIndex);
+
     // Проверяем соотношение игроков с депозитами и ожидающих выплату
-    if (playersWithDeposits[player.depositIndex] > 0 && playersWaitingForPayout[player.depositIndex] >= playersWithDeposits[player.depositIndex] * ratioMultiplier) {
+    if (playersWithDepositsCount > 0 && playersWaitingForPayoutCount >= playersWithDepositsCount * ratioMultiplier) {
         
         // Если это девятая успешная выплата
         if (payoutsPerDeposit[player.depositIndex] % 9 == 0) {
@@ -385,12 +386,8 @@
     player.madeDeposit = false;
     player.receivedPayout = true;
 
-    
-    // Уменьшаем количество ожидающих выплату игроков
-    playersWaitingForPayout[player.depositIndex]--;
-    if (player.depositIndex == 0) {
-    playersWithDeposits[player.depositIndex]--;
-    }
+
+
 
     // Переход на следующий депозит
     if (player.depositIndex < DEPOSIT_AMOUNTS.length - 1) {
@@ -475,7 +472,20 @@
     ratioMultiplier = _newMultiplier;
     }
 
-    // Modifier to ensure that only the contract owner can call certain functions
+
+    // Функция для пополнения резервного бюджета
+    function depositToReserve(uint256 amount) external onlyOwner {
+    // Переводим токены с кошелька владельца на контракт
+    require(token.transferFrom(msg.sender, address(this), amount), "Token transfer failed");
+
+    // Увеличиваем резервный бюджет на переданную сумму
+    reserveBudget += amount; 
+    }
+
+    // ///////////////////////////////////////////////////////////
+
+    
+     // Modifier to ensure that only the contract owner can call certain functions
     modifier onlyOwner() {
     // Check that the message sender is the owner of the contract
     require(msg.sender == owner, "Caller is not the owner");
@@ -489,18 +499,6 @@
     require(!players[msg.sender].hasFinished, "Player has finished the game");
     _; // Continue execution of the function
     }
-
-
-    // Функция для пополнения резервного бюджета
-    function depositToReserve(uint256 amount) external onlyOwner {
-    // Переводим токены с кошелька владельца на контракт
-    require(token.transferFrom(msg.sender, address(this), amount), "Token transfer failed");
-
-    // Увеличиваем резервный бюджет на переданную сумму
-    reserveBudget += amount; 
-    }
-
-
 
     // /////////////////////////////////////////////////////
 
@@ -530,7 +528,27 @@
     }
 
 
-    
+    function countPlayersWithDeposits(uint256 depositIndex) internal view returns (uint256) {
+    uint256 count = 0;
+    for (uint256 i = 0; i < playersArray.length; i++) {  // playersArray — массив всех игроков
+        if (players[playersArray[i]].depositIndex == depositIndex && players[playersArray[i]].madeDeposit) {
+            count++;
+        }
+    }
+    return count;
+    }
+
+    function countPlayersWaitingForPayout(uint256 depositIndex) internal view returns (uint256) {
+    uint256 count = 0;
+    for (uint256 i = 0; i < playersArray.length; i++) {  // playersArray — массив всех игроков
+        if (players[playersArray[i]].depositIndex == depositIndex && !players[playersArray[i]].receivedPayout) {
+            count++;
+        }
+    }
+    return count;
+}
+
+
 
     // Функция для получения информации о конкретном игроке
     function getPlayerInfo(address _playerAddress) external view returns(uint256 currentDepositIndex, uint256 depositsCompleted, bool hasFinished) {
