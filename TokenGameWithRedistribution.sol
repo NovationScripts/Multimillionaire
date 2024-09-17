@@ -528,6 +528,20 @@
     ownerReservePercentage = newPercentage;
     }
 
+    // Функция для изменения всего массива DEPOSIT_AMOUNTS
+    function setDepositAmounts(uint256[] memory newDepositAmounts) external onlyOwner {
+    require(newDepositAmounts.length > 0, "Deposit amounts array cannot be empty");
+    DEPOSIT_AMOUNTS = newDepositAmounts;
+    }
+
+    // Функция для изменения отдельного элемента массива DEPOSIT_AMOUNTS
+    function setDepositAmount(uint256 index, uint256 newAmount) external onlyOwner {
+    require(index < DEPOSIT_AMOUNTS.length, "Index out of bounds");
+    require(newAmount > 0, "Deposit amount must be greater than zero");
+    DEPOSIT_AMOUNTS[index] = newAmount;
+    }
+
+
     // ///////////////////////////////////////////////////////////
 
     
@@ -688,5 +702,4 @@
      event ReferralWithdrawalMade(address indexed referrer, uint256 amount); // Triggered when a referrer successfully withdraws referral earnings
 
     
-    
-    }
+     }
