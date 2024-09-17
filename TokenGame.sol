@@ -242,7 +242,7 @@
 
     
     // Рассчёт комиссии контракта и реферальной комиссии
-    uint256 contractCommission = (depositAmount * CONTRACT_COMMISSION) / 100;
+    uint256 commission = (depositAmount * CONTRACT_COMMISSION) / 100;
     uint256 referralFee = (depositAmount * REFERRAL_COMMISSION) / 100;
 
      // Обновляем бюджет депозита
