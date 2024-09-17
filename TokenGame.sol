@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+    // SPDX-License-Identifier: MIT
 
     pragma solidity ^0.8.0;
 
@@ -297,6 +297,9 @@
 
     function requestPayout() external {
     Player storage player = players[msg.sender];
+
+    // Проверяем, доступна ли выплата (время ожидания должно быть истекшим)
+    require(block.timestamp >= player.nextPayoutAttemptTime, "Payout request too early");
 
     // Проверяем, доступна ли выплата
     if (!isPayoutAvailableFor(msg.sender)) {
