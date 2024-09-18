@@ -59,6 +59,8 @@ This game is only a part of our ecosystem, and you can't even begin to estimate 
 
 Multi-accounting is not prohibited.
 
+After completing the game, each player will receive some of the most valuable tokens, which will be in high demand because these tokens are essential to play the game.
+
 How do you think, is it possible to launch such a project, including the token and interfaces, with a zero budget?
 
 **We enjoy doing what we love, and we have a talent for it**.
