@@ -43,6 +43,8 @@ The game [Multimillionaire](https://github.com/NovationScripts/Multimillionaire)
 
 The ratioMultiplier protects against the exponential growth of players in the payout queue and prevents cheating with the game’s economy. However, if there is an exponential increase in new players, the compensator may not be needed, or needed only rarely. I hope that cheaters won't be able to harm the game’s economy. Try to imagine (or simulate) the gameplay to understand how it works.
 
+If 10 players make deposits of $1 each, 9 players will receive $1.09, leaving 10 cents in the budget, and one player will remain in the queue while the other 9 will have passed through.
+
 Multi-accounting is not prohibited.
 
 
