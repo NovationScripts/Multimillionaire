@@ -55,6 +55,8 @@ Based on the certainty that the rate on the DEX P2P will be 1 token equal to no 
 
 In the best-case scenario, it could take no less than 2970 hours to complete the game, which is 123.75 days, or 4.125 months.
 
+This game is only a part of our ecosystem, and you can't even begin to estimate how liquid the token will be.
+
 Multi-accounting is not prohibited.
 
 How do you think, is it possible to launch such a project, including the token and interfaces, with a zero budget?
