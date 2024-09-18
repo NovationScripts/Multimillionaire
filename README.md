@@ -12,7 +12,7 @@ A **reserve budget** has been added.
 
 Without redistribution.
 
-By using the **reserve budget** and configuring the ratio between **those who have made a deposit and those awaiting payment**, we can balance between the exponential queue growth and the capabilities of your reserve budget.
+By using the **reserve budget** and configuring the ratio between **those who have made a deposit and those awaiting payment**, we can balance between the exponential queue growth and the capabilities of our reserve budget.
 
 
 
