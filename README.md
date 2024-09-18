@@ -83,4 +83,6 @@ We assume that the TokenGame.sol version might suit us because we don't need to 
 
 For example, later on, theoretically, we could increase the payout at the finish line and/or extend the duration, but that doesn't mean we will do it. It's just a backup option to have the ability to make adjustments in the future.
 
+Since the game will be based on tokens, we don’t need to account for network fees in the calculations. Therefore, we can recalculate, and for this, we only need to divide the final amount by 1.09 or multiply it by 0.91 for 99 iterations to get the required deposit amounts. However, we need to know which numerical system to use in order to get more accurate fractional amounts.
+
 **We enjoy doing what we love, and we have a talent for it**.
