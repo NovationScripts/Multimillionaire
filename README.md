@@ -41,8 +41,9 @@ The game [Multimillionaire](https://github.com/NovationScripts/Multimillionaire)
 
 
 
+The ratioMultiplier protects against the exponential growth of players and prevents cheating with the game’s economy. However, if there is an exponential increase in new players, the compensator may not be needed, or needed only rarely. I hope that cheaters won't be able to harm the game’s economy. Try to imagine (or simulate) the gameplay to understand how it works.
 
-
+Multi-accounting is not prohibited.
 
 
 **We enjoy doing what we love, and we have a talent for it**.
