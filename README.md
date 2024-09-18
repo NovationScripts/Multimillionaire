@@ -63,6 +63,8 @@ After completing the game, each player will receive some of the most valuable to
 
 Our ecosystem is inherently closed, independent, and self-sufficient, not relying on cryptocurrency exchanges or anything of the sort.
 
+We create the demand and set the exchange rate ourselves.
+
 How do you think, is it possible to launch such a project, including the token and interfaces, with a zero budget?
 
 **We enjoy doing what we love, and we have a talent for it**.
