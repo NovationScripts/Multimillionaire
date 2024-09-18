@@ -51,6 +51,8 @@ To prevent the game from feeling too easy and boring, we can also use the compen
 
 Increasing the token supply and sending them to the reserve budget to ensure every fifth payout, can be compared to mining. However, in our game, the "mining" process is more engaging and intricate.
 
+At the same time, it's accessible to a larger number of users, with approximately equal chances and conditions for everyone, even after a long period of time.
+
 And earnings of 5% from one referral would be approximately ~$50,000 if the referred player reaches the finish line.
 
 Based on the certainty that the rate on the **Decentralized Exchange P2P** will be 1 token equal to no less than 1 ETH.
