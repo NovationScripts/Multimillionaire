@@ -9,11 +9,11 @@
    uint256 public constant referralCommission = 5; // Referral commission percentage
    uint256 public payoutMultiplier = 109; // Payout multiplier
    uint256 public ratioMultiplier = 9;
-   uint256 public reservePercentage = 10;  // Процент депозита, который идёт в резервный бюджет
+   uint256 public reservePercentage = 0;  // Процент депозита, который идёт в резервный бюджет
    uint256 public contractEarnings; // Переменная для хранения заработков контракта
    uint256 public reserveBudget; // Переменная для резервного бюджета
-   uint256 public referralReservePercentage = 10;  // Процент, направляемый в резервный бюджет при выводе реферальных заработков
-   uint256 public ownerReservePercentage = 10;  // Процент, направляемый в резервный бюджет при выводе заработков владельцем
+   uint256 public referralReservePercentage = 0;  // Процент, направляемый в резервный бюджет при выводе реферальных заработков
+   uint256 public ownerReservePercentage = 0;  // Процент, направляемый в резервный бюджет при выводе заработков владельцем
    mapping(uint256 => uint256) public payoutsPerDeposit;
    mapping(uint256 => uint256) public depositBudgets; // Бюджеты для депозитов
    uint256 public totalDepositsCount;
