@@ -51,7 +51,7 @@ If the compensator value is set to 8, every eighth successful payout is made fro
 
 And earnings of 5% from one referral would be approximately ~$50,000 if the referred player reaches the finish line.
 
-Based on the certainty that the rate on the DEX will be 1 token equal to no less than 1 ETH.
+Based on the certainty that the rate on the DEX P2P will be 1 token equal to no less than 1 ETH.
 
 In the best-case scenario, it could take no less than 2970 hours to complete the game, which is 123.75 days, or 4.125 months.
 
