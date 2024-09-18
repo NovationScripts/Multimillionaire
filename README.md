@@ -43,9 +43,9 @@ The game [Multimillionaire](https://github.com/NovationScripts/Multimillionaire)
 
 The ratioMultiplier protects against the exponential growth of players in the payout queue and prevents cheating with the game’s economy. However, if there is an exponential increase in new players, the compensator may not be needed, or needed only rarely. I hope that cheaters won't be able to harm the game’s economy. Try to imagine (or simulate) the gameplay to understand how it works.
 
-If 10 players make deposits of $1 each, 9 players will receive $1.09, leaving 10 cents in the budget, and one player will remain in the queue while the other 9 will have passed through.
+If 10 players make deposits of $1 each, 9 players will receive $1.09, leaving 10 cents in the budget, and one player will remain in the queue while the other 9 will have passed through. If you don't account for the contract's earnings and referral earnings, this scenario holds. 
 
-If you don't account for the contract's earnings and referral earnings, this scenario holds. However, if you include those earnings, it might be necessary to adjust the compensator's value to 5. Such a payout frequency from the reserve budget can stabilize the system, provided there is a stable or slightly increasing influx of new players. If the compensator value is set to 5, every fifth successful payout is made from the reserve budget, thereby saving the current deposit budget.
+However, if you include those earnings, it might be necessary to adjust the compensator's value to 5. Such a payout frequency from the reserve budget can stabilize the system, provided there is a stable or slightly increasing influx of new players. If the compensator value is set to 5, every fifth successful payout is made from the reserve budget, thereby saving the current deposit budget.
 
 To prevent the game from feeling too easy and boring, we can also use the compensator to vary the difficulty level of achieving a successful payout by gradually increasing its value and then decreasing it, or by bringing the queue to a certain level of difficulty and keeping it there. After all, this is the path to millions, and with many multiaccounts, a bit of difficulty will actually benefit the token's liquidity.
 
