@@ -47,6 +47,8 @@ If 10 players make deposits of $1 each, 9 players will receive $1.09, leaving 10
 
 If you don't account for the contract's earnings and referral earnings, this scenario holds. However, if you include those earnings, it might be necessary to adjust the compensator's value to 8 or 7.
 
+If the compensator value is set to 8, every eighth successful payout is made from the reserve budget, thereby saving the current deposit budget.
+
 Multi-accounting is not prohibited.
 
 
