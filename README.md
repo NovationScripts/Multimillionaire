@@ -73,7 +73,7 @@ What do you think, who would want to sell tokens that can be farmed and exchange
 
 How do you think, is it possible to launch such a project, including the token and interfaces, with a zero budget?
 
-We can release the equivalent of up to two billion dollars to investors, which will be converted into Ethereum at the exchange rate at the time of the transaction if it's not in Ethereum. When issued in tokens, the amount will be multiplied by 1.5, provided that there is a thorough audit and, if necessary, assistance in launching the project.
+We can release the equivalent of up to two billion dollars to investors, which will be converted into Ethereum at the exchange rate at the time of the transaction if it's not in Ethereum. When issued in tokens, the amount will be multiplied by 1.5, provided that there is a thorough audit and, if necessary, assistance in launching the project. In any case, we will calculate it so that investors receive the equivalent +50%, if there are any.
 
 But investing is not the main or mandatory aspect; the key is a thorough audit and support.
 
