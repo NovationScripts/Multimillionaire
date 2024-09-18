@@ -49,6 +49,8 @@ If you don't account for the contract's earnings and referral earnings, this sce
 
 If the compensator value is set to 8, every eighth successful payout is made from the reserve budget, thereby saving the current deposit budget.
 
+And earnings of 5% from one referral would be approximately ~$50,000 if the referred player reaches the finish line.
+
 Multi-accounting is not prohibited.
 
 
