@@ -81,4 +81,6 @@ Over time, we will not allow the cryptocurrency on which we launch our project t
 
 We assume that the TokenGame.sol version might suit us because we don't need to redistribute to the reserve budget, but instinctively, we want to have more flexible settings.
 
+For example, later on, theoretically, we could increase the payout at the finish line and/or extend the duration, but that doesn't mean we will do it. It's just a backup option to have the ability to make adjustments in the future.
+
 **We enjoy doing what we love, and we have a talent for it**.
