@@ -79,4 +79,6 @@ But investing is not the main or mandatory aspect; the key is a thorough audit a
 
 Over time, we will not allow the cryptocurrency on which we launch our project to drop in value, and later this cryptocurrency will become the leading one.
 
+We assume that the TokenGame.sol version might suit us because we don't need to redistribute to the reserve budget, but instinctively, we want to have more flexible settings.
+
 **We enjoy doing what we love, and we have a talent for it**.
