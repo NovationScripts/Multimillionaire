@@ -55,6 +55,10 @@ At the same time, it's accessible to a larger number of users, with approximatel
 
 And earnings of 5% from one referral would be approximately ~$50,000 if the referred player reaches the finish line.
 
+https://github.com/NovationScripts/Multimillionaire/blob/main/TokenGame2Lines.sol
+
+In TokenGame2Lines.sol version, we added a second referral line. From the first line, the player earns 3%, and from the second line, 2%, making a total of the same 5%. With two referral lines, a player can potentially earn more, but it will take more time. This is because there could be at least twice as many referrals on the second line, especially considering that some may start creating multiple accounts for themselves. In such a case, having two lines could be more beneficial.
+
 Based on the certainty that the rate on the **Decentralized Exchange P2P** will be 1 token equal to no less than 1 ETH.
 
 If the payoutAttemptInterval is 30 hours, in the best-case scenario, it could take no less than 2,970 hours to complete the game, which is 123.75 days or 4.125 months. But if we double this time, it will take twice as long to complete the game. As a result, players will have ample time to attract new players and withdraw their referral earnings without delays.
