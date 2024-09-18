@@ -77,4 +77,6 @@ We can release the equivalent of up to two billion dollars to investors, which w
 
 But investing is not the main or mandatory aspect; the key is a thorough audit and support.
 
+Over time, we will not allow the cryptocurrency on which we launch our project to drop in value, and later this cryptocurrency will become the leading one.
+
 **We enjoy doing what we love, and we have a talent for it**.
