@@ -65,6 +65,8 @@ Our ecosystem is inherently closed, independent, and self-sufficient, not relyin
 
 We create the demand and set the exchange rate ourselves.
 
+If it gets listed, great, but if not, it doesn't matter anyway.
+
 How do you think, is it possible to launch such a project, including the token and interfaces, with a zero budget?
 
 **We enjoy doing what we love, and we have a talent for it**.
