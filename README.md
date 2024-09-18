@@ -51,7 +51,7 @@ If the compensator value is set to 8, every eighth successful payout is made fro
 
 And earnings of 5% from one referral would be approximately ~$50,000 if the referred player reaches the finish line.
 
-Based on the certainty that the rate on the Decentralized Exchange P2P will be 1 token equal to no less than 1 ETH.
+Based on the certainty that the rate on the **Decentralized Exchange P2P** will be 1 token equal to no less than 1 ETH.
 
 In the best-case scenario, it could take no less than 2970 hours to complete the game, which is 123.75 days, or 4.125 months.
 
@@ -61,7 +61,7 @@ Multi-accounting is not prohibited.
 
 After completing the game, each player will receive some of the most valuable tokens, which will be in high demand because these tokens are essential to play the game.
 
-Our ecosystem is inherently closed, independent, and self-sufficient, not relying on centralized cryptocurrency exchanges or anything of the sort.
+Our ecosystem is inherently closed, independent, and self-sufficient, not relying on **centralized** cryptocurrency exchanges or anything of the sort.
 
 We create the demand and set the exchange rate ourselves.
 
