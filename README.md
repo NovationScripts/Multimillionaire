@@ -67,6 +67,8 @@ We create the demand and set the exchange rate ourselves.
 
 If it gets listed, great, but if not, it doesn't matter anyway.
 
+Participants in our ecosystem will only need to farm some of the most valuable tokens.
+
 How do you think, is it possible to launch such a project, including the token and interfaces, with a zero budget?
 
 **We enjoy doing what we love, and we have a talent for it**.
