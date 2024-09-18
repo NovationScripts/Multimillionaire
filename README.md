@@ -53,7 +53,7 @@ And earnings of 5% from one referral would be approximately ~$50,000 if the refe
 
 Based on the certainty that the rate on the **Decentralized Exchange P2P** will be 1 token equal to no less than 1 ETH.
 
-If the payoutAttemptInterval is 30 hours, in the best-case scenario, it could take no less than 2,970 hours to complete the game, which is 123.75 days or 4.125 months. But if we double this time, it will take twice as long to complete the game. As a result, players will have ample time to attract new players and withdraw their earnings without delays.
+If the payoutAttemptInterval is 30 hours, in the best-case scenario, it could take no less than 2,970 hours to complete the game, which is 123.75 days or 4.125 months. But if we double this time, it will take twice as long to complete the game. As a result, players will have ample time to attract new players and withdraw their referral earnings without delays.
 
 This game is only a part of our ecosystem, and you can't even begin to estimate how liquid the token will be.
 
