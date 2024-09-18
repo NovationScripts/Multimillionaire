@@ -53,7 +53,11 @@ Increasing the token supply and sending them to the reserve budget to ensure eve
 
 At the same time, it's accessible to a larger number of users, with approximately equal chances and conditions for everyone, even after a long period of time.
 
-And earnings of 5% from one referral would be approximately ~$50,000 if the referred player reaches the finish line.
+And earnings of 5% from one referral would be not less than $50,000 if the referred player reaches the finish line.
+
+In fact, if you calculate it, 5% from one player across all their deposits is roughly equivalent to 277.72 ETH. So, we could comfortably reduce these percentages to 1% to save budgets or shift the 5% referral payment to only the final deposit.
+
+
 
 https://github.com/NovationScripts/Multimillionaire/blob/main/TokenGame2Lines.sol
 
