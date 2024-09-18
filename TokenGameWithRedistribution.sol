@@ -275,8 +275,7 @@
         players[referrer].referralEarnings += referralFee;
     }
 
-    // Начисляем контрактную комиссию
-    contractEarnings += contractCommission;
+   
 
     // Устанавливаем время ожидания для следующей выплаты
     player.nextPayoutAttemptTime = block.timestamp + payoutAttemptInterval;
