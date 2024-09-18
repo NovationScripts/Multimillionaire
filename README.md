@@ -55,5 +55,6 @@ In the best-case scenario, it could take no less than 2970 hours to complete the
 
 Multi-accounting is not prohibited.
 
+How do you think, is it possible to launch such a project, including the token and interfaces, with a zero budget?
 
 **We enjoy doing what we love, and we have a talent for it**.
