@@ -264,13 +264,12 @@
     // Получаем адрес реферера
     address referrer = player.referrer;
 
-    // Если есть реферер, начисляем реферальные вознаграждения
+    // Если есть реферал, начисляем реферальные вознаграждения
     if (referrer != address(0)) {
         players[referrer].referralEarnings += referralFee;
     }
 
-    // Начисляем контрактную комиссию
-    contractEarnings += contractCommission;
+    
 
     // Устанавливаем время ожидания для следующей выплаты
     player.nextPayoutAttemptTime = block.timestamp + payoutAttemptInterval;
