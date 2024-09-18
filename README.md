@@ -45,7 +45,7 @@ The ratioMultiplier protects against the exponential growth of players in the pa
 
 If 10 players make deposits of $1 each, 9 players will receive $1.09, leaving 10 cents in the budget, and one player will remain in the queue while the other 9 will have passed through.
 
-If you don't account for the contract's earnings and referral earnings, this scenario holds. However, if you include those earnings, it might be necessary to adjust the compensator's value to 8 or 7.
+If you don't account for the contract's earnings and referral earnings, this scenario holds. However, if you include those earnings, it might be necessary to adjust the compensator's value to 8 or 7, or even fewer, if the contract fee and referral earnings amount to 10% (5% + 5%) of each deposit.
 
 If the compensator value is set to 8, every eighth successful payout is made from the reserve budget, thereby saving the current deposit budget.
 
