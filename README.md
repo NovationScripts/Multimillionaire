@@ -51,6 +51,8 @@ If the compensator value is set to 8, every eighth successful payout is made fro
 
 And earnings of 5% from one referral would be approximately ~$50,000 if the referred player reaches the finish line.
 
+In the best-case scenario, it could take no less than 2970 hours to complete the game, which is 123.75 days, or 4.125 months.
+
 Multi-accounting is not prohibited.
 
 
