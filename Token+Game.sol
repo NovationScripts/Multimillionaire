@@ -699,7 +699,7 @@
      event ReservePaymentMade(address indexed player, uint256 amount); // Вызов при выплате из резервного бюджета
      event OwnerWithdrawal(address indexed owner, uint256 withdrawalAmount); // Triggered when the owner withdraws funds
      event ReferralWithdrawalMade(address indexed referrer, uint256 amount); // Triggered when a referrer successfully withdraws referral earnings
-
+     // Остальное логирование ...
     
     
     }
