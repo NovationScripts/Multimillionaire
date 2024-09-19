@@ -1,10 +1,10 @@
    // SPDX-License-Identifier: MIT 
 
     pragma solidity ^0.8.0;
-
+    import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
     
 
-  contract MultimillionaireToken {
+   contract MultimillionaireToken is ReentrancyGuard {
    // Constants for fund distribution
    uint256 public constant contractCommission = 50; // 0.5% Contract commission percentage
    uint256 public constant firstLineReferralCommission = 30; // 0.3% с депозита первой линии
