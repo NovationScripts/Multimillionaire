@@ -251,13 +251,13 @@ function makeDeposit() public onlyPlayer {
 
     // Если есть реферал, начисляем реферальные вознаграждения с первой и второй линий
     if (referrer != address(0)) {
-        // Начисляем 3% с первой линии
+        // Начисляем 0.3% с первой линии
         players[referrer].referralEarnings += firstLineReferralFee;
 
         // Проверяем, есть ли у реферера свой реферал (вторая линия)
         address secondLineReferrer = players[referrer].referrer;
         if (secondLineReferrer != address(0)) {
-            // Начисляем 2% с второй линии
+            // Начисляем 0.2% с второй линии
             secondLineReferralFee = (depositAmount * secondLineReferralCommission) / 10000;  // 0.2% от депозита
             players[secondLineReferrer].referralEarnings += secondLineReferralFee;
         }
