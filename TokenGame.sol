@@ -242,8 +242,8 @@
 
     
     // Рассчёт комиссии контракта и реферальной комиссии
-    contractEarnings += (depositAmount * contractCommission) / 100;
-    uint256 referralFee = (depositAmount * referralCommission) / 100;
+    contractEarnings += (depositAmount * contractCommission) / 10000;
+    uint256 referralFee = (depositAmount * referralCommission) / 10000;
 
      // Обновляем бюджет депозита
     depositBudgets[player.depositIndex] += (depositAmount - referralFee - contractCommission);
