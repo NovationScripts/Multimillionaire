@@ -264,7 +264,7 @@ function makeDeposit() public onlyPlayer {
     }
 
     // Обновляем бюджет депозита, вычитая все комиссии
-    depositBudgets[player.depositIndex] += (depositAmount - (depositAmount * contractCommission) / 100 - firstLineReferralFee - secondLineReferralFee);
+    depositBudgets[player.depositIndex] += (depositAmount - (depositAmount * contractCommission) / 10000 - firstLineReferralFee - secondLineReferralFee);
     totalDepositsCount++; // Увеличиваем количество депозитов
 
     // Устанавливаем флаг "сделал депозит"
