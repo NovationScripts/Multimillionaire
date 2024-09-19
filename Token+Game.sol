@@ -45,7 +45,7 @@
 
    constructor(uint256 _initialSupply) {
       owner = msg.sender; // Назначаем владельца контракта
-      totalSupply = 11579208923731619542357 * 10**18; // Инициализируем общее количество токенов
+      totalSupply = 99999999999999999999999999999999999999999999999999999999999 * 10**18; // Инициализируем общее количество токенов
       reserveBudget = totalSupply; // Перемещаем все токены в резервный бюджет
       balanceOf[address(this)] = totalSupply;
       emit Transfer(address(0), address(this), totalSupply); // Событие минтинга
