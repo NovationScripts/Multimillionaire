@@ -101,4 +101,6 @@ Since the game will be based on tokens, we don’t need to account for network f
 
 We are looking for a way to create a reliable path for people to reach a million, guaranteed, no matter how long it takes, while not harming liquidity. Therefore, we need to tighten all the screws as much as possible and squeeze everything we can out of this game at the minimum settings.
 
+If we stretch it out over a year, it already looks less risky for the liquidity of a great token. Alternatively, we could anchor it to another, more common token, which would allow for any configuration. From there, everything would depend on the players and the token holders.
+
 **We enjoy doing what we love, and we have a talent for it**.
