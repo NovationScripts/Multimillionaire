@@ -55,7 +55,7 @@ At the same time, it's accessible to a larger number of users, with approximatel
 
 And earnings of 5% from one referral would be not less than $50,000 if the referred player reaches the finish line.
 
-In fact, if you calculate it, 5% from one player across all their deposits is roughly equivalent to 277.72 ETH. So, we could comfortably reduce these percentages to 1% to save budgets or shift the 5% referral payment to only the final deposit.
+In fact, if you calculate it, 5% from one player across all their deposits is roughly equivalent to 277.72 ETH. So, we could comfortably reduce these percentages to 0.5% (That would be approximately $50,000 at today's exchange rate) to save budgets or shift the 5% referral payment to only the final deposit.
 
 
 
