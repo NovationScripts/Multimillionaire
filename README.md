@@ -103,4 +103,12 @@ We are looking for a way to create a reliable path for people to reach a million
 
 If we stretch it out over a year, it already looks less risky for the liquidity of a great token. Alternatively, we could anchor it to another, simpler token, which would allow for any configuration. From there, everything would depend on the players and the token holders.
 
+And one more tiny contract here.
+
+https://github.com/NovationScripts/Multimillionaire/blob/main/Token+Game.sol
+
+Token+Game.sol In this case, the token is integrated into the game, making the token and the game a unified whole.
+
+In this scenario, the reserve budget is filled to the maximum, and no one else has tokens. However, it can be configured so that a certain number of players can make their first deposit for free, using the reserve budget.
+
 **We enjoy doing what we love, and we have a talent for it**.
