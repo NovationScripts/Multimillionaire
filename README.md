@@ -113,4 +113,6 @@ In this scenario, the reserve budget is filled to the maximum, and no one else h
 
 In this version, the economy is the most sustainable, and the reserve budget will be enough for at least 10 Earths for 10 generations.
 
+If the errors are fixed, it might actually work.
+
 **We enjoy doing what we love, and we have a talent for it**.
