@@ -251,7 +251,11 @@
     uint256 referralFee = (depositAmount * referralCommission) / 10000;  // 0.5% от депозита
 
      // Обновляем бюджет депозита
-    depositBudgets[player.depositIndex] += (depositAmount - referralFee - contractCommission);
+    depositBudgets[player.depositIndex] += (
+    depositAmount 
+    - referralFee  // Уже рассчитано с учётом деления на 10000
+    - (depositAmount * contractCommission) / 10000  // Корректное вычитание комиссии контракта 0.5%
+);
     reserveBudget += reserveAmount;  // Пополняем резервный бюджет
     totalDepositsCount++; // Увеличиваем количество депозитов
 
