@@ -11,8 +11,8 @@
 
    contract Multimillionaire {
    // Constants for fund distribution
-   uint256 public constant contractCommission = 5; // Contract commission percentage, The contract owner's earnings without token rewards.
-   uint256 public constant referralCommission = 5; // Referral commission percentage
+   uint256 public constant contractCommission = 50; // 0.5% Contract commission percentage, The contract owner's earnings without token rewards.
+   uint256 public constant referralCommission = 50; // 0.5% Referral commission percentage
    uint256 public constant payoutMultiplier = 109; // Payout multiplier
    uint256 public ratioMultiplier = 9;
    uint256 public contractEarnings; // Переменная для хранения заработков контракта
