@@ -1,4 +1,4 @@
-   // SPDX-License-Identifier: MIT 
+  // SPDX-License-Identifier: MIT 
 
     pragma solidity ^0.8.0;
     import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -383,7 +383,7 @@
 
 
 
-    function processPayments() internal onlyPlayer {
+    function processPayments() internal nonReentrant onlyPlayer {
     Player storage player = players[msg.sender];
 
     // Проверяем, что игрок внёс депозит и ещё не получил выплату
@@ -470,7 +470,7 @@
     // //////////////////////////////////////////////////////////
 
     // Функция для вывода реферальных заработков
-    function withdrawReferralEarnings() external onlyPlayer {
+    function withdrawReferralEarnings() external nonReentrant onlyPlayer {
     Player storage player = players[msg.sender];
     uint256 amount = player.referralEarnings;
 
@@ -501,7 +501,7 @@
 
 
     // Функция для вывода заработка владельцем контракта
-    function withdrawOwnerEarnings() external onlyOwner {
+    function withdrawOwnerEarnings() external nonReentrant onlyOwner {
     // Проверяем, что есть заработанные токены для вывода
     require(contractEarnings > 0, "No contract earnings to withdraw");
 
