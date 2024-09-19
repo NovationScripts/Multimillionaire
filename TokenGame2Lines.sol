@@ -11,9 +11,9 @@
 
    contract Multimillionaire {
    // Constants for fund distribution
-   uint256 public constant contractCommission = 5; // Contract commission percentage, The contract owner's earnings without token rewards.
-   uint256 public constant firstLineReferralCommission = 3; // 3% с депозита первой линии
-   uint256 public constant secondLineReferralCommission = 2; // 2% с депозита второй линии
+   uint256 public constant contractCommission = 50; // 0.5% Contract commission percentage, The contract owner's earnings without token rewards.
+   uint256 public constant firstLineReferralCommission = 30; // 0.3% с депозита первой линии
+   uint256 public constant secondLineReferralCommission = 20; // 0.2% с депозита второй линии
    uint256 public constant payoutMultiplier = 109; // Payout multiplier
    uint256 public ratioMultiplier = 9;
    uint256 public contractEarnings; // Переменная для хранения заработков контракта
@@ -240,10 +240,10 @@ function makeDeposit() public onlyPlayer {
     require(token.transferFrom(msg.sender, address(this), depositAmount), "Token transfer failed");
 
     // Рассчёт комиссии контракта
-    contractEarnings += (depositAmount * contractCommission) / 100;
+    contractEarnings += (depositAmount * contractCommission) / 10000; // 0.5%
 
     // Рассчёт комиссий для реферальных линий
-    uint256 firstLineReferralFee = (depositAmount * firstLineReferralCommission) / 100;
+    uint256 firstLineReferralFee = (depositAmount * firstLineReferralCommission) / 10000;  // 0.3% от депозита
     uint256 secondLineReferralFee = 0;
 
     // Получаем адрес реферера
@@ -258,7 +258,7 @@ function makeDeposit() public onlyPlayer {
         address secondLineReferrer = players[referrer].referrer;
         if (secondLineReferrer != address(0)) {
             // Начисляем 2% с второй линии
-            secondLineReferralFee = (depositAmount * secondLineReferralCommission) / 100;
+            secondLineReferralFee = (depositAmount * secondLineReferralCommission) / 10000;  // 0.2% от депозита
             players[secondLineReferrer].referralEarnings += secondLineReferralFee;
         }
     }
