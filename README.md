@@ -74,6 +74,8 @@ We could say that players confirm blocks with their deposits.
 
 It is possible to create a liquid network from tokens.
 
+We can add a function for adding new additional flags after completing the game.
+
 If the errors are fixed, it might actually work.
 
 **We enjoy doing what we love, and we have a talent for it**.
