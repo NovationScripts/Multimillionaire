@@ -76,7 +76,7 @@ It is possible to create a liquid network from tokens. On the DEX, we can equate
 
 We can add a function for adding new additional flags after completing the game.
 
-
+In such networks, not only communities but also entire countries could unite, thereby regulating the exchange rate in relation to other currencies. This way, the exchange rate would be more realistic.
 
 If the errors are fixed, it might actually work.
 
