@@ -1,4 +1,4 @@
- // SPDX-License-Identifier: MIT 
+// SPDX-License-Identifier: MIT 
 
    pragma solidity ^0.8.0;
    import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -213,7 +213,7 @@
     uint256 nextPayoutAttemptTime; // Time of the player's next payout attempt
     uint256[] flags; // Массив флагов игрока после прохождения игры
     uint256[] registrationFlags; // Массив флагов для доступа к регистрации
-
+    uint256[] prohibitedRegistrationFlags; // Запрещенные флаги к регистрации
     }
 
 
@@ -600,6 +600,54 @@
         externalContracts.push(_externalContract);
     }
 
+    // Добавляем флаг игроку в массив registrationFlags
+    function addRegistrationFlag(address _player, uint256 _flag) public {
+    Player storage player = players[_player];
+    player.registrationFlags.push(_flag); // Добавляем новый флаг в массив registrationFlags
+    }
+
+    // Удаление флага из массива registrationFlags по индексу с заменой на последний элемент массива
+    function removeRegistrationFlag(address _player, uint256 flagIndex) public {
+    Player storage player = players[_player];
+    require(flagIndex < player.registrationFlags.length, "Invalid flag index");
+
+    // Перемещаем последний элемент на место удаляемого
+    player.registrationFlags[flagIndex] = player.registrationFlags[player.registrationFlags.length - 1];
+    player.registrationFlags.pop(); // Удаляем последний элемент массива
+    }
+
+
+
+
+
+    
+
+
+
+    // Добавляем запрещенный флаг игроку в массив prohibitedRegistrationFlags
+    function addProhibitedRegistrationFlag(address _player, uint256 _flag) public {
+    Player storage player = players[_player];
+    player.prohibitedRegistrationFlags.push(_flag); // Добавляем новый флаг в массив prohibitedRegistrationFlags
+    }
+
+    // Удаление флага из массива prohibitedRegistrationFlags по индексу с заменой на последний элемент массива
+    function removeProhibitedRegistrationFlag(address _player, uint256 flagIndex) public {
+    Player storage player = players[_player];
+    require(flagIndex < player.prohibitedRegistrationFlags.length, "Invalid flag index");
+
+    // Перемещаем последний элемент на место удаляемого
+    player.prohibitedRegistrationFlags[flagIndex] = player.prohibitedRegistrationFlags[player.prohibitedRegistrationFlags.length - 1];
+    player.prohibitedRegistrationFlags.pop(); // Удаляем последний элемент массива
+    }
+
+
+
+
+
+
+
+
+
     modifier checkRegistrationFlagsWithExternalContracts(address _player) {
     // Проверяем, что у игрока есть хотя бы один флаг для регистрации
     require(players[_player].registrationFlags.length > 0, "No registration flags in player's array");
@@ -609,7 +657,7 @@
         IExternalContract externalContract = IExternalContract(externalContracts[i]);
         uint256[] memory externalFlags = externalContract.getFlags(_player);
 
-        // Проверяем наличие каждого флага игрока в массиве внешних флагов
+        // Проверяем наличие каждого разрешенного флага игрока в массиве внешних флагов
         for (uint256 j = 0; j < players[_player].registrationFlags.length; j++) {
             bool flagFound = false;
             for (uint256 k = 0; k < externalFlags.length; k++) {
@@ -620,8 +668,18 @@
             }
             require(flagFound, "One or more registration flags not found in external contract");
         }
+
+        // Проверяем, что запрещенные флаги отсутствуют
+        for (uint256 j = 0; j < players[_player].prohibitedRegistrationFlags.length; j++) {
+            for (uint256 k = 0; k < externalFlags.length; k++) {
+                require(
+                    players[_player].prohibitedRegistrationFlags[j] != externalFlags[k],
+                    "Player has prohibited flags"
+                );
+            }
+        }
     }
-    _;
+    _; 
     }
 
 
