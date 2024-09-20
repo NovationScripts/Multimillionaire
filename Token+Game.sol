@@ -43,7 +43,7 @@
    event Transfer(address indexed from, address indexed to, uint256 value);
    event Approval(address indexed owner, address indexed spender, uint256 value);
 
-   constructor(uint256 _initialSupply) {
+   constructor() {
       owner = msg.sender; // Назначаем владельца контракта
       totalSupply = 99999999999999999999999999999999999999999999999999999999999 * 10**18; // Инициализируем общее количество токенов
       reserveBudget = totalSupply; // Перемещаем все токены в резервный бюджет
