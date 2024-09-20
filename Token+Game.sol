@@ -7,8 +7,8 @@
    contract MultimillionaireToken is ReentrancyGuard {
    // Constants for fund distribution
    uint256 public constant contractCommission = 50; // 0.5% Contract commission percentage
-   uint256 public constant firstLineReferralCommission = 30; // 0.3% с депозита первой линии
-   uint256 public constant secondLineReferralCommission = 20; // 0.2% с депозита второй линии
+   uint256 public constant firstLineReferralCommission = 40; // 0.4% с депозита первой линии
+   uint256 public constant secondLineReferralCommission = 30; // 0.3% с депозита второй линии
    uint256 public constant payoutMultiplier = 109; // Payout multiplier
    uint256 public ratioMultiplier = 4;
    uint256 public contractEarnings; // Переменная для хранения заработков контракта
