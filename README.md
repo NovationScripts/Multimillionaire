@@ -78,6 +78,8 @@ We can add a function for adding new additional flags after completing the game.
 
 In such networks, not only communities but also entire countries could unite, thereby regulating the exchange rate in relation to other currencies. This way, the exchange rate would be more realistic.
 
+Countries could calculate the ratio and transition to an additional financial system, or fully transition without default, regulating the exchange rate instead of the quantity.
+
 If the errors are fixed, it might actually work.
 
 **We enjoy doing what we love, and we have a talent for it**.
