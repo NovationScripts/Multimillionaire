@@ -72,6 +72,8 @@ In this version, the economy is the most sustainable, and the reserve budget wil
 
 We could say that players confirm blocks with their deposits.
 
+It is possible to create a liquid network from tokens.
+
 If the errors are fixed, it might actually work.
 
 **We enjoy doing what we love, and we have a talent for it**.
