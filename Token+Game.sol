@@ -401,7 +401,7 @@
     // Проверяем соотношение игроков с депозитами и ожидающих выплату
     if (playersWithDepositsCount > 0 && playersWaitingForPayoutCount >= playersWithDepositsCount * ratioMultiplier) {
         
-        // Если это девятая успешная выплата
+        // Если это четвёртая успешная выплата
         if (payoutsPerDeposit[player.depositIndex] % 4 == 0) {
             // Проверяем, достаточно ли средств в бюджете депозита для девятой выплаты
             if (depositBudgets[player.depositIndex] >= payout) {
