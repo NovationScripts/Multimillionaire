@@ -1,8 +1,6 @@
 **The Path of the Multimillionaire**
 
-The game [Multimillionaire](https://github.com/NovationScripts/Multimillionaire/tree/main) [TokenGame.sol](https://github.com/NovationScripts/Multimillionaire/blob/main/TokenGame.sol) is an updated version of the game [GetEthTop](https://github.com/NovationScripts/GetEthTop/) with some bug fixes and several improvements.
-
-In this game, there are no levels or steps; the game has been adapted to a token-based system.
+The game [Multimillionaire](https://github.com/NovationScripts/Multimillionaire/tree/main) [TokenGame.sol](https://github.com/NovationScripts/Multimillionaire/blob/main/TokenGame.sol) has been adapted to a token-based system.
 
 **In this game, there are 99 different and sequential deposits, 99 separate budgets, and 99 separate queues**.
 
