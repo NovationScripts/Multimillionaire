@@ -72,9 +72,11 @@ In this version, the economy is the most sustainable, and the reserve budget wil
 
 We could say that players confirm blocks with their deposits.
 
-It is possible to create a liquid network from tokens.
+It is possible to create a liquid network from tokens. On the DEX, we can equate or calculate the coefficient.
 
 We can add a function for adding new additional flags after completing the game.
+
+
 
 If the errors are fixed, it might actually work.
 
