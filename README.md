@@ -68,7 +68,7 @@ And one more tiny contract here.
 
 In this scenario, the reserve budget is filled to the maximum, and no one else has tokens. However, it can be configured so that a certain number of players can make their first deposit for free, using the reserve budget.
 
-In this version, the economy is the most sustainable, and the reserve budget will be enough for at least 10 Earths for 10 generations.
+In this version, the economy is the most sustainable. If we assume that the equivalent of all the money on planet Earth is a septillion, then the reserve budget would be enough for 109,999,999,999,999,999,999,999 such planets.
 
 We could say that players confirm blocks with their deposits.
 
