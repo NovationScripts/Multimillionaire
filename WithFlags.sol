@@ -57,6 +57,61 @@
       emit Transfer(address(0), address(this), totalSupply); // Событие минтинга
    }
 
+    // ///////////////////////////////////////////////////////////
+
+    modifier checkRegistrationFlagsWithExternalContracts(address _player) {
+    // Проверяем, что у игрока есть хотя бы один флаг для регистрации
+    require(players[_player].registrationFlags.length > 0, "No registration flags in player's array");
+
+    // Проверяем флаги из всех внешних контрактов
+    for (uint256 i = 0; i < externalContracts.length; i++) {
+        IExternalContract externalContract = IExternalContract(externalContracts[i]);
+        uint256[] memory externalFlags = externalContract.getFlags(_player);
+
+        // Проверяем наличие каждого разрешенного флага игрока в массиве внешних флагов
+        for (uint256 j = 0; j < players[_player].registrationFlags.length; j++) {
+            bool flagFound = false;
+            for (uint256 k = 0; k < externalFlags.length; k++) {
+                if (players[_player].registrationFlags[j] == externalFlags[k]) {
+                    flagFound = true;
+                    break;
+                }
+            }
+            require(flagFound, "One or more registration flags not found in external contract");
+        }
+
+        // Проверяем, что запрещенные флаги отсутствуют
+        for (uint256 j = 0; j < players[_player].prohibitedRegistrationFlags.length; j++) {
+            for (uint256 k = 0; k < externalFlags.length; k++) {
+                require(
+                    players[_player].prohibitedRegistrationFlags[j] != externalFlags[k],
+                    "Player has prohibited flags"
+                );
+            }
+        }
+    }
+    _; 
+    }
+
+
+    
+     // Modifier to ensure that only the contract owner can call certain functions
+    modifier onlyOwner() {
+    // Check that the message sender is the owner of the contract
+    require(msg.sender == owner, "Caller is not the owner");
+    _; // Continue execution of the function
+    }
+
+    // Modifier to ensure that only registered players can call certain functions
+    modifier onlyPlayer() {
+    // Check that the message sender is a registered player and has not finished the game
+    require(players[msg.sender].referrer != address(0), "Not a registered player");
+    require(!players[msg.sender].hasFinished, "Player has finished the game");
+    _; // Continue execution of the function
+    }
+
+    // /////////////////////////////////////////////////////
+
    // Функция для перевода токенов
    function transfer(address _to, uint256 _value) public returns (bool success) {
       require(balanceOf[msg.sender] >= _value, "Insufficient balance");
@@ -643,78 +698,10 @@
 
 
 
+    // ////////////////////////////////////////////////////////////////////
 
 
-
-
-
-    modifier checkRegistrationFlagsWithExternalContracts(address _player) {
-    // Проверяем, что у игрока есть хотя бы один флаг для регистрации
-    require(players[_player].registrationFlags.length > 0, "No registration flags in player's array");
-
-    // Проверяем флаги из всех внешних контрактов
-    for (uint256 i = 0; i < externalContracts.length; i++) {
-        IExternalContract externalContract = IExternalContract(externalContracts[i]);
-        uint256[] memory externalFlags = externalContract.getFlags(_player);
-
-        // Проверяем наличие каждого разрешенного флага игрока в массиве внешних флагов
-        for (uint256 j = 0; j < players[_player].registrationFlags.length; j++) {
-            bool flagFound = false;
-            for (uint256 k = 0; k < externalFlags.length; k++) {
-                if (players[_player].registrationFlags[j] == externalFlags[k]) {
-                    flagFound = true;
-                    break;
-                }
-            }
-            require(flagFound, "One or more registration flags not found in external contract");
-        }
-
-        // Проверяем, что запрещенные флаги отсутствуют
-        for (uint256 j = 0; j < players[_player].prohibitedRegistrationFlags.length; j++) {
-            for (uint256 k = 0; k < externalFlags.length; k++) {
-                require(
-                    players[_player].prohibitedRegistrationFlags[j] != externalFlags[k],
-                    "Player has prohibited flags"
-                );
-            }
-        }
-    }
-    _; 
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // ///////////////////////////////////////////////////////////
-
-    
-     // Modifier to ensure that only the contract owner can call certain functions
-    modifier onlyOwner() {
-    // Check that the message sender is the owner of the contract
-    require(msg.sender == owner, "Caller is not the owner");
-    _; // Continue execution of the function
-    }
-
-    // Modifier to ensure that only registered players can call certain functions
-    modifier onlyPlayer() {
-    // Check that the message sender is a registered player and has not finished the game
-    require(players[msg.sender].referrer != address(0), "Not a registered player");
-    require(!players[msg.sender].hasFinished, "Player has finished the game");
-    _; // Continue execution of the function
-    }
-
-    // /////////////////////////////////////////////////////
+   
 
     function getTotalPlayers() public view returns(uint256) {
     return totalPlayerCount;
