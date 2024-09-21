@@ -68,7 +68,7 @@ And one more tiny contract here.
 
 In this scenario, the reserve budget is filled to the maximum, and no one else has tokens. However, it can be configured so that a certain number of players can make their first deposit for free, using the reserve budget.
 
-In this version, the economy is the most sustainable. If we assume that the equivalent of all the money on planet Earth is a septillion, then the reserve budget would be enough for 109,999,999,999,999,999,999,999 such planets. But tokens can be taken from the reserve budget only after every fourth successful payout if the ratio of players in the queue is greater than 9 waiting for payout to 1 making a deposit. This is a fairly optimized and safe budget expenditure.
+In this version, the economy is the most sustainable. If we assume that the equivalent of all the money on planet Earth is a septillion, then the reserve budget would be enough for 109,999,999,999,999,999,999,999 such planets. But tokens can be taken from the reserve budget only after every fourth successful payout if the ratio of players in the queue is greater than 9 waiting for payout to 1 making a deposit. This is a fairly optimized and safe budget expenditure. Primarily, users will be transferring deposits between each other, but if the queue starts to stall, the reserve budget will kick in.
 
 We could say that players confirm blocks with their deposits.
 
