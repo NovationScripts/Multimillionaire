@@ -12,10 +12,10 @@
    contract Multimillionaire {
    // Constants for fund distribution
    uint256 public constant contractCommission = 50; // 0.5% Contract commission percentage, The contract owner's earnings without token rewards.
-   uint256 public constant firstLineReferralCommission = 30; // 0.3% с депозита первой линии
-   uint256 public constant secondLineReferralCommission = 20; // 0.2% с депозита второй линии
+   uint256 public constant firstLineReferralCommission = 40; // 0.4% с депозита первой линии
+   uint256 public constant secondLineReferralCommission = 30; // 0.3% с депозита второй линии
    uint256 public constant payoutMultiplier = 109; // Payout multiplier
-   uint256 public ratioMultiplier = 5;
+   uint256 public ratioMultiplier = 10;
    uint256 public contractEarnings; // Переменная для хранения заработков контракта
    uint256 public reserveBudget; // Переменная для резервного бюджета
    mapping(uint256 => uint256) public payoutsPerDeposit;
@@ -258,7 +258,7 @@ function makeDeposit() public onlyPlayer {
     contractEarnings += (depositAmount * contractCommission) / 10000; // 0.5%
 
     // Рассчёт комиссий для реферальных линий
-    uint256 firstLineReferralFee = (depositAmount * firstLineReferralCommission) / 10000;  // 0.3% от депозита
+    uint256 firstLineReferralFee = (depositAmount * firstLineReferralCommission) / 10000;  // 0.4% от депозита
     uint256 secondLineReferralFee = 0;
 
     // Получаем адрес реферера
@@ -266,14 +266,14 @@ function makeDeposit() public onlyPlayer {
 
     // Если есть реферал, начисляем реферальные вознаграждения с первой и второй линий
     if (referrer != address(0)) {
-        // Начисляем 0.3% с первой линии
+        // Начисляем 0.4% с первой линии
         players[referrer].referralEarnings += firstLineReferralFee;
 
         // Проверяем, есть ли у реферера свой реферал (вторая линия)
         address secondLineReferrer = players[referrer].referrer;
         if (secondLineReferrer != address(0)) {
-            // Начисляем 0.2% с второй линии
-            secondLineReferralFee = (depositAmount * secondLineReferralCommission) / 10000;  // 0.2% от депозита
+            // Начисляем 0.3% с второй линии
+            secondLineReferralFee = (depositAmount * secondLineReferralCommission) / 10000;  // 0.3% от депозита
             players[secondLineReferrer].referralEarnings += secondLineReferralFee;
         }
     }
@@ -367,7 +367,7 @@ function makeDeposit() public onlyPlayer {
     if (playersWithDepositsCount > 0 && playersWaitingForPayoutCount >= playersWithDepositsCount * ratioMultiplier) {
         
         // Если это девятая успешная выплата
-        if (payoutsPerDeposit[player.depositIndex] % 9 == 0) {
+        if (payoutsPerDeposit[player.depositIndex] % 4 == 0) {
             // Проверяем, достаточно ли средств в бюджете депозита для девятой выплаты
             if (depositBudgets[player.depositIndex] >= payout) {
                 // Выплачиваем из бюджета депозита
