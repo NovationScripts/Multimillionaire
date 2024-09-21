@@ -1,4 +1,4 @@
-     // SPDX-License-Identifier: MIT
+      // SPDX-License-Identifier: MIT
 
     pragma solidity ^0.8.0;
 
@@ -40,8 +40,23 @@
     players[owner].referrer = address(0); // Регистрируем владельца контракта как первого игрока
     }
 
+    // /////////////////////////////////////////////////////////
+	   // Modifier to ensure that only the contract owner can call certain functions
+    modifier onlyOwner() {
+    // Check that the message sender is the owner of the contract
+    require(msg.sender == owner, "Caller is not the owner");
+    _; // Continue execution of the function
+    }
 
-	
+    // Modifier to ensure that only registered players can call certain functions
+    modifier onlyPlayer() {
+    // Check that the message sender is a registered player and has not finished the game
+    require(players[msg.sender].referrer != address(0), "Not a registered player");
+    require(!players[msg.sender].hasFinished, "Player has finished the game");
+    _; // Continue execution of the function
+    }
+
+    // /////////////////////////////////////////////////////
 	
 	
     uint256[] public DEPOSIT_AMOUNTS = [
@@ -544,22 +559,7 @@
     // ///////////////////////////////////////////////////////////
 
     
-     // Modifier to ensure that only the contract owner can call certain functions
-    modifier onlyOwner() {
-    // Check that the message sender is the owner of the contract
-    require(msg.sender == owner, "Caller is not the owner");
-    _; // Continue execution of the function
-    }
-
-    // Modifier to ensure that only registered players can call certain functions
-    modifier onlyPlayer() {
-    // Check that the message sender is a registered player and has not finished the game
-    require(players[msg.sender].referrer != address(0), "Not a registered player");
-    require(!players[msg.sender].hasFinished, "Player has finished the game");
-    _; // Continue execution of the function
-    }
-
-    // /////////////////////////////////////////////////////
+  
 
     function getTotalPlayers() public view returns(uint256) {
     return totalPlayerCount;
