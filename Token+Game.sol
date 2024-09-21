@@ -10,7 +10,7 @@
    uint256 public constant firstLineReferralCommission = 40; // 0.4% с депозита первой линии
    uint256 public constant secondLineReferralCommission = 30; // 0.3% с депозита второй линии
    uint256 public constant payoutMultiplier = 109; // Payout multiplier
-   uint256 public ratioMultiplier = 9; // Соотношение очереди при котором применяется резервный бюджет
+   uint256 public ratioMultiplier = 10; // Соотношение очереди при котором применяется резервный бюджет
    uint256 public contractEarnings; // Переменная для хранения заработков контракта
    uint256 public reserveBudget; // Переменная для резервного бюджета
    mapping(uint256 => uint256) public payoutsPerDeposit;
