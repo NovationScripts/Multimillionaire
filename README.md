@@ -53,7 +53,7 @@ On the Ethereum network, using a single recovery phrase (seed phrase), an unlimi
 
 Based on the certainty that the rate on the **Decentralized Exchange P2P** will be 1 token equal to no less than 1 ETH.
 
-If the payoutAttemptInterval is 30 hours, in the best-case scenario, it could take no less than 2,970 hours to complete the game, which is 123.75 days or 4.125 months. But if we double this time, it will take twice as long to complete the game. As a result, players will have ample time to attract new players and withdraw their referral earnings without delays.
+If the payoutAttemptInterval is 30 hours, in the best-case scenario, it could take no less than 2,970 hours to complete the game, which is 123.75 days or 4.125 months. If we turn 90 hours into 30/30-hours intervals, it adds up to a full year. But if we double this time, it will take twice as long to complete the game. As a result, players will have ample time to attract new players and withdraw their referral earnings without delays.
 
 
 
