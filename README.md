@@ -73,7 +73,7 @@ In this version, the economy is the most sustainable. If we assume that the equi
 We could say that players confirm blocks with their deposits.
 
 
-[WithFlags.sol](https://github.com/NovationScripts/Multimillionaire/blob/main/WithFlags.sol) This version includes flag verification during registration and the addition of flags after completing the game. Theoretically, it is possible to create contracts with different conditions based on the configuration of flags. For example, to access a shared P2P liquidity pool or other complex contracts, and to set the sequence of access to contracts.
+[WithFlags.sol](https://github.com/NovationScripts/Multimillionaire/blob/main/WithFlags.sol) This version includes flag verification during registration and the addition of flags after completing the game. Theoretically, it is possible to create contracts with different conditions based on the configuration of flags. For example, to access a shared P2P liquidity pool or other complex contracts, and to set the sequence of access to contracts. The current flags can be pre-programmed variables.
 
 
 
