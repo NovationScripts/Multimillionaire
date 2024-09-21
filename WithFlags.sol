@@ -14,7 +14,7 @@
    uint256 public constant firstLineReferralCommission = 30; // 0.3% с депозита первой линии
    uint256 public constant secondLineReferralCommission = 20; // 0.2% с депозита второй линии
    uint256 public constant payoutMultiplier = 109; // Payout multiplier
-   uint256 public ratioMultiplier = 4;
+   uint256 public ratioMultiplier = 9;
    uint256 public contractEarnings; // Переменная для хранения заработков контракта
    uint256 public reserveBudget; // Переменная для резервного бюджета
    mapping(uint256 => uint256) public payoutsPerDeposit;
@@ -466,7 +466,7 @@
     if (playersWithDepositsCount > 0 && playersWaitingForPayoutCount >= playersWithDepositsCount * ratioMultiplier) {
         
         // Если это девятая успешная выплата
-        if (payoutsPerDeposit[player.depositIndex] % 9 == 0) {
+        if (payoutsPerDeposit[player.depositIndex] % 4 == 0) {
             // Проверяем, достаточно ли средств в бюджете депозита для девятой выплаты
             if (depositBudgets[player.depositIndex] >= payout) {
                 // Выплачиваем из бюджета депозита
