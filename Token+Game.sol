@@ -30,9 +30,9 @@
    uint256 public totalReferralEarnings = 0; // Total referral earnings
    uint256 public totalReferralWithdrawals = 0; // Total referral withdrawals
    uint256 public totalPlayerCount; // Total number of players counter
-   uint256 public payoutAttemptInterval = 30 hours;  // Интервал между выплатами
-   uint256 public minWaitingTime = 10 hours; // Минимальное время ожидания
-   uint256 public reductionAmount = 10 hours; // Величина уменьшения времени
+   uint256 public payoutAttemptInterval = 90 hours;  // Интервал между выплатами
+   uint256 public minWaitingTime = 30 hours; // Минимальное время ожидания
+   uint256 public reductionAmount = 30 hours; // Величина уменьшения времени
 
 
    // ERC-20 токен логика
