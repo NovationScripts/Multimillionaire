@@ -47,4 +47,6 @@ At this stage, the contract has reached its maximum possible size.
 
 If the errors are fixed, it might actually work.
 
+If you have any thoughts, you can leave them in the discussions of this repository. https://github.com/NovationScripts/Multimillionaire/discussions
+
 **We enjoy doing what we love, and we have a talent for it**.
