@@ -38,10 +38,10 @@ In this scenario, the reserve budget is filled to the maximum, and no one else h
 
 In this version, the economy is the most sustainable. If we assume that the equivalent of all the money on planet Earth is a septillion, then the reserve budget would be enough for 109,999,999,999,999,999,999,999 such planets. But tokens can be taken from the reserve budget only after every fourth successful payout if the ratio of players in the queue is greater than 10 waiting for payout to 1 making a deposit.  This is a fairly optimized and safe budget expenditure. Primarily, users will be transferring deposits between each other, but if the queue starts to stall, the reserve budget will kick in. In this case, a few cents remain in the deposit budget from every 10 people who pass through. Out of every 10 people who pass through, 12% goes to referral and contract payouts, 87.2% goes to paying eight players, and the reserve budget covers the payouts for the other two. This means we can set the ratio to 10/5 in the settings.
 
-We could say that players confirm blocks with their deposits.
-
 
 This version includes flag verification during registration and the addition of flags after completing the game. Theoretically, it is possible to create contracts with different conditions based on the configuration of flags. For example, to access a shared P2P liquidity pool or other complex contracts, and to set the sequence of access to contracts. The current flags can be pre-programmed variables and constants.
+
+We could say that players confirm blocks with their deposits.
 
 At this stage, the contract has reached its maximum possible size.
 
