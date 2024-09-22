@@ -1,4 +1,4 @@
- // SPDX-License-Identifier: MIT 
+  // SPDX-License-Identifier: MIT 
 
     pragma solidity ^0.8.0;
     import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -11,6 +11,7 @@
    uint256 public constant secondLineReferralCommission = 30; // 0.3% с депозита второй линии
    uint256 public constant payoutMultiplier = 109; // Payout multiplier
    uint256 public ratioMultiplier = 10; // Соотношение очереди при котором применяется резервный бюджет
+   uint256 public payoutCycle = 5; // Число, кратное которому будут проверяться успешные выплаты
    uint256 public contractEarnings; // Переменная для хранения заработков контракта
    uint256 public reserveBudget; // Переменная для резервного бюджета
    mapping(uint256 => uint256) public payoutsPerDeposit;
@@ -432,7 +433,7 @@
     if (playersWithDepositsCount > 0 && playersWaitingForPayoutCount >= playersWithDepositsCount * ratioMultiplier) {
         
         // Если это четвёртая успешная выплата
-        if (payoutsPerDeposit[player.depositIndex] % 4 == 0) {
+        if (payoutsPerDeposit[player.depositIndex] % payoutCycle == 0) {
             // Проверяем, достаточно ли средств в бюджете депозита для девятой выплаты
             if (depositBudgets[player.depositIndex] >= payout) {
                 // Выплачиваем из бюджета депозита
@@ -588,6 +589,12 @@
     function setMaxFreeUsers(uint256 newMaxFreeUsers) public onlyOwner {
     require(newMaxFreeUsers > freeDepositsCount, "New value must be greater than current freeDepositsCount");
     maxFreeUsers = newMaxFreeUsers;
+    }
+
+
+    function setPayoutCycle(uint256 newPayoutCycle) external onlyOwner {
+    require(newPayoutCycle > 0, "Payout cycle must be greater than 0");
+    payoutCycle = newPayoutCycle;
     }
 
 
