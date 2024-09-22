@@ -2,7 +2,7 @@
 
     pragma solidity ^0.8.0;
     import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-    
+   
 
    contract MultimillionaireToken is ReentrancyGuard {
    // Constants for fund distribution
@@ -15,8 +15,10 @@
    uint256 public reserveBudget; // Переменная для резервного бюджета
    mapping(uint256 => uint256) public payoutsPerDeposit;
    mapping(uint256 => uint256) public depositBudgets; // Бюджеты для депозитов
+   mapping(address => uint256) public totalPayouts;  // Mapping to track total payouts for each player
+   mapping(address => Player) public players; // Mapping of player addresses to their PlayerData
+   mapping(address => bool) public canSponsorFirstDeposit; // Добавляем переменную-флаг для отслеживания состояния оплаты первого депозита реферером
    uint256 public totalDepositsCount;
-
    uint256 public freeDepositsCount; // Счётчик пользователей с бесплатным депозитом
    uint256 public maxFreeUsers = 1000000; // Максимальное количество бесплатных первых депозитов
 
@@ -206,11 +208,7 @@
 
 
 
-    // Mapping to track total payouts for each player
-    mapping(address => uint256) public totalPayouts; 
-
-    // Mapping of player addresses to their PlayerData
-     mapping(address => Player) public players;
+   
 
     // Data structure for a player
     struct Player {
@@ -280,7 +278,6 @@
     
     
     
-    // Функция для внесения депозита
     function makeDeposit() public onlyPlayer {
     Player storage player = players[msg.sender];
 
@@ -293,44 +290,57 @@
     // Получаем сумму депозита для текущего индекса
     uint256 depositAmount = depositAmounts[player.depositIndex];
 
-    // Если игрок попадает в число первых пользователей, списываем из резервного бюджета
-    if (freeDepositsCount < maxFreeUsers && player.depositIndex == 0) {
-    require(reserveBudget >= depositAmount, "Insufficient reserve budget");
-    reserveBudget -= depositAmount;
-    freeDepositsCount++;
+    // Объявляем переменную реферера на уровне всей функции
+    address referrer = player.referrer;
+
+    if (player.depositIndex == 0) {
+        // Если это первый депозит, проверяем, может ли реферер его оплатить
+        if (canSponsorFirstDeposit[referrer] && players[referrer].referralEarnings >= depositAmount) {
+            // Реферер оплачивает первый депозит из своих реферальных заработков
+            players[referrer].referralEarnings -= depositAmount;
+        } else {
+            // Игрок сам оплачивает первый депозит
+            require(balanceOf[msg.sender] >= depositAmount, "Insufficient token balance");
+            balanceOf[msg.sender] -= depositAmount;
+        }
+
+        // Если это первый депозит и игрок попадает в число пользователей с бесплатным депозитом
+        if (freeDepositsCount < maxFreeUsers) {
+            freeDepositsCount++;
+        }
+
     } else {
-    // Проверяем баланс игрока и списываем токены
-    require(balanceOf[msg.sender] >= depositAmount, "Insufficient token balance");
-    balanceOf[msg.sender] -= depositAmount;
-    balanceOf[address(this)] += depositAmount;
+        // Для последующих депозитов игрок сам платит
+        require(balanceOf[msg.sender] >= depositAmount, "Insufficient token balance");
+        balanceOf[msg.sender] -= depositAmount;
     }
+
+    // Переводим депозит на баланс контракта
+    balanceOf[address(this)] += depositAmount;
 
     // Рассчёт комиссии контракта
     contractEarnings += (depositAmount * contractCommission) / 10000; // 0.5%
 
-    // Рассчёт комиссий для реферальных линий
+    // Рассчёт реферальных комиссий
     uint256 firstLineReferralFee = (depositAmount * firstLineReferralCommission) / 10000;  // 0.4% от депозита
     uint256 secondLineReferralFee = 0;
 
-    // Получаем адрес реферера
-    address referrer = player.referrer;
-
-    // Если есть реферал, начисляем реферальные вознаграждения с первой и второй линий
+    // Если есть реферер, начисляем ему и его рефереру реферальные вознаграждения
     if (referrer != address(0)) {
         // Начисляем 0.4% с первой линии
         players[referrer].referralEarnings += firstLineReferralFee;
 
-        // Проверяем, есть ли у реферера свой реферал (вторая линия)
+        // Проверяем, есть ли у реферера свой реферер (вторая линия)
         address secondLineReferrer = players[referrer].referrer;
         if (secondLineReferrer != address(0)) {
-            // Начисляем 0.3% с второй линии
-            secondLineReferralFee = (depositAmount * secondLineReferralCommission) / 10000;  // 0.3% от депозита
+            // Начисляем 0.3% со второй линии
+            secondLineReferralFee = (depositAmount * secondLineReferralCommission) / 10000;
             players[secondLineReferrer].referralEarnings += secondLineReferralFee;
         }
     }
 
     // Обновляем бюджет депозита, вычитая все комиссии
-    depositBudgets[player.depositIndex] += (depositAmount - (depositAmount * contractCommission) / 10000 - firstLineReferralFee - secondLineReferralFee);
+    depositBudgets[player.depositIndex] += (depositAmount - firstLineReferralFee - secondLineReferralFee - (depositAmount * contractCommission) / 10000);
     totalDepositsCount++; // Увеличиваем количество депозитов
 
     // Устанавливаем флаг "сделал депозит"
@@ -345,7 +355,8 @@
 
     // Устанавливаем время ожидания для следующей выплаты
     player.nextPayoutAttemptTime = block.timestamp + payoutAttemptInterval;
-    }
+}
+
 
 
 	
@@ -487,6 +498,16 @@
 
 
     // //////////////////////////////////////////////////////////
+
+    // Функция для активации/деактивации оплаты первого депозита реферером
+    function toggleSponsorFirstDeposit() external onlyPlayer {
+    Player storage referrer = players[msg.sender];
+    require(referrer.referralEarnings > 0, "Insufficient referral earnings");
+
+    // Переключаем флаг
+    canSponsorFirstDeposit[msg.sender] = !canSponsorFirstDeposit[msg.sender];
+    }
+
 
     // Функция для вывода реферальных заработков
     function withdrawReferralEarnings() external nonReentrant onlyPlayer {
