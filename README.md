@@ -41,6 +41,8 @@ In this version, the economy is the most sustainable. If we assume that the equi
 
 This version includes flag verification during registration and the addition of flags after completing the game. Theoretically, it is possible to create contracts with different conditions based on the configuration of flags. For example, to access a shared P2P liquidity pool or other complex contracts, and to set the sequence of access to contracts. The current flags can be pre-programmed variables and constants.
 
+**The gameplay is as follows: During player registration, it is mandatory to specify a referrer; registration without a referrer is not allowed. Additionally, the system checks for flags from other contracts. The player can then make a free first deposit from the reserve budget if available, or from the referrer's account if that option is active, or the player can make the deposit independently. When the deposit budget has sufficient funds, the player will receive a payout and can make the next deposit. The referrer earns a commission from each player's deposit, both from the first and second referral lines, and can withdraw referral earnings without delays. Once the player has made all possible deposits, the game is considered completed, and the player receives the "hasFinished" flag.**
+
 We could say that players confirm blocks with their deposits.
 
 At this stage, the contract has reached its maximum possible size.
