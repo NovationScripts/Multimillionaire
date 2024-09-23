@@ -47,7 +47,7 @@ We could say that players confirm blocks with their deposits.
 
 At this stage, the contract has reached its maximum possible size.
 
-If the errors are fixed, it might actually work.
+If the errors are fixed, it might actually work. The contract compiles and deploys, but errors occur during testing.
 
 If you have any thoughts, you can leave them in the discussions of this repository. https://github.com/NovationScripts/Multimillionaire/discussions
 
