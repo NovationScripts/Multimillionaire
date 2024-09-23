@@ -258,7 +258,6 @@
     uint256 nextPayoutAttemptTime; // Time of the player's next payout attempt
     mapping(uint256 => bool) flags; // Массив флагов игрока после прохождения игры
     mapping(uint256 => bool) registrationFlags; // Mapping флагов для регистрации
-    mapping(uint256 => bool) prohibitedRegistrationFlags; // Mapping запрещённых флагов
     }
 
 
