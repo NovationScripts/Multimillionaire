@@ -1,4 +1,4 @@
-          // SPDX-License-Identifier: MIT 
+        // SPDX-License-Identifier: MIT 
 
     pragma solidity ^0.8.0;
     import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -11,9 +11,9 @@
 
    contract MultimillionaireToken is ReentrancyGuard {
    // Constants for fund distribution
-   uint256 public constant contractCommission = 50; // 0.5% Contract commission percentage
-   uint256 public constant firstLineReferralCommission = 40; // 0.4% с депозита первой линии
-   uint256 public constant secondLineReferralCommission = 30; // 0.3% с депозита второй линии
+   uint256 public contractCommission = 50; // 0.5% Contract commission percentage
+   uint256 public firstLineReferralCommission = 40; // 0.4% с депозита первой линии
+   uint256 public secondLineReferralCommission = 30; // 0.3% с депозита второй линии
    uint256 public payoutMultiplier = 109; // Payout multiplier
    uint256 public ratioMultiplier = 10; // Соотношение очереди при котором применяется резервный бюджет
    uint256 public payoutCycle = 5; // Число, кратное которому будут проверяться успешные выплаты
@@ -665,13 +665,32 @@
     }
 
 
+
+    // Функция для изменения комиссии контракта
+    function setContractCommission(uint256 newCommission) external onlyOwner {
+    require(newCommission >= 0 && newCommission <= 10000, "Invalid commission value");
+    contractCommission = newCommission;
+    }
+
+    // Функция для изменения реферальной комиссии первой линии
+    function setFirstLineReferralCommission(uint256 newCommission) external onlyOwner {
+    require(newCommission >= 0 && newCommission <= 10000, "Invalid commission value");
+    firstLineReferralCommission = newCommission;
+    }
+
+    // Функция для изменения реферальной комиссии второй линии
+    function setSecondLineReferralCommission(uint256 newCommission) external onlyOwner {
+    require(newCommission >= 0 && newCommission <= 10000, "Invalid commission value");
+    secondLineReferralCommission = newCommission;
+    }
+
     // ///////////////////////////////////////////////////////////
 
     // Функция для изменения адреса внешнего контракта
-function setExternalContract(address _newExternalContract) external onlyOwner {
+    function setExternalContract(address _newExternalContract) external onlyOwner {
     require(_newExternalContract != address(0), "Invalid external contract address");
     externalContractAddress = _newExternalContract;
-}
+    }
 
 
 
