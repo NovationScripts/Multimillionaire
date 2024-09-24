@@ -1,13 +1,9 @@
- // SPDX-License-Identifier: MIT
+    // SPDX-License-Identifier: MIT
     pragma solidity ^0.8.0;
-    
-    // Интерфейс для взаимодействия с внешним контрактом
-interface IExternalContract {
-    function getFlags(address _player) external view returns (uint256[] memory);
-}
 
-// Контракт для донатов, разрешающий донат только один раз
-contract DonationContract {
+
+    // Контракт для донатов, разрешающий донат только один раз
+    contract DonationContract {
     // Маппинг для хранения информации о том, сделал ли игрок пожертвование
     mapping(address => bool) public donationMade;
 
@@ -24,9 +20,6 @@ contract DonationContract {
 
     // Адрес владельца контракта
     address public owner;
-
-    // Адрес внешнего контракта для проверки флагов
-    address public externalContractAddress;
 
     // Событие для логирования донатов
     event DonationReceived(address indexed player, uint256 amount);
@@ -76,15 +69,6 @@ contract DonationContract {
         emit DonationReceived(msg.sender, msg.value);
     }
 
-    // Функция для получения флагов (например, сделал ли игрок пожертвование) через внешний контракт
-    function getFlags(address _player) external view returns (uint256[] memory) {
-        // Подключаемся к внешнему контракту
-        IExternalContract externalContract = IExternalContract(externalContractAddress);
-        
-        // Вызываем метод getFlags для получения флагов игрока
-        return externalContract.getFlags(_player);
-    }
-
     // Функция для изменения минимальной суммы доната (только для владельца)
     function setMinimumDonationAmount(uint256 _newAmount) external onlyOwner {
         require(_newAmount > 0, "Minimum donation amount must be greater than 0");
@@ -121,11 +105,4 @@ contract DonationContract {
     function withdraw() external onlyOwner {
         payable(owner).transfer(address(this).balance);
     }
-
-    // Функция для установки адреса внешнего контракта
-    function setExternalContractAddress(address _externalContractAddress) external onlyOwner {
-        require(_externalContractAddress != address(0), "Invalid external contract address");
-        externalContractAddress = _externalContractAddress;
     }
-}
-
