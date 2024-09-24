@@ -1,4 +1,4 @@
-     // SPDX-License-Identifier: MIT 
+          // SPDX-License-Identifier: MIT 
 
     pragma solidity ^0.8.0;
     import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -14,7 +14,7 @@
    uint256 public constant contractCommission = 50; // 0.5% Contract commission percentage
    uint256 public constant firstLineReferralCommission = 40; // 0.4% с депозита первой линии
    uint256 public constant secondLineReferralCommission = 30; // 0.3% с депозита второй линии
-   uint256 public constant payoutMultiplier = 109; // Payout multiplier
+   uint256 public payoutMultiplier = 109; // Payout multiplier
    uint256 public ratioMultiplier = 10; // Соотношение очереди при котором применяется резервный бюджет
    uint256 public payoutCycle = 5; // Число, кратное которому будут проверяться успешные выплаты
    uint256 public contractEarnings; // Переменная для хранения заработков контракта
@@ -30,7 +30,7 @@
 
    address[] public playersArray; // Массив для хранения всех адресов игроков
 
-   address[] public externalContracts; // Array to store addresses of external contracts
+   address public externalContractAddress; //  Store address of external contract
    
    // Contract state variables
    address public owner; // Owner of the contract
@@ -83,21 +83,17 @@
 
 
     modifier checkRegistrationFlagsWithExternalContracts(address _player) {
-    require(externalContracts.length > 0, "No external contracts set");
+    require(externalContractAddress != address(0), "No external contract set");
 
-    // Проверяем флаги из всех внешних контрактов
-    for (uint256 i = 0; i < externalContracts.length; i++) {
-        IExternalContract externalContract = IExternalContract(externalContracts[i]);
-        uint256[] memory externalFlags = externalContract.getFlags(_player);
+    IExternalContract externalContract = IExternalContract(externalContractAddress);
+    uint256[] memory externalFlags = externalContract.getFlags(_player);
 
-        // Проверяем, что все флаги из внешнего контракта установлены у игрока как `registrationFlags`
-        for (uint256 j = 0; j < externalFlags.length; j++) {
-            require(
-                players[_player].registrationFlags[externalFlags[j]], // Проверка флага в registrationFlags
-                "One or more required registration flags are not set"
-            );
-        }
-    }
+    // Проверка флага 
+    require(
+        externalFlags[0] == 1,  // 0-й индекс — это флаг пожертвования
+        "Donation has not been made"
+    );
+
     _;
     }
 
@@ -526,6 +522,28 @@
     }
 
 
+    
+     
+      function countPlayersWithDeposits(uint256 depositIndex) internal view returns (uint256) {
+    uint256 count = 0;
+    for (uint256 i = 0; i < playersArray.length; i++) {  // playersArray — массив всех игроков
+        if (players[playersArray[i]].depositIndex == depositIndex && players[playersArray[i]].madeDeposit) {
+            count++;
+        }
+    }
+    return count;
+    }
+
+    function countPlayersWaitingForPayout(uint256 depositIndex) internal view returns (uint256) {
+    uint256 count = 0;
+    for (uint256 i = 0; i < playersArray.length; i++) {  // playersArray — массив всех игроков
+        if (players[playersArray[i]].depositIndex == depositIndex && !players[playersArray[i]].receivedPayout) {
+            count++;
+        }
+    }
+    return count;
+    }
+
 
 
     // //////////////////////////////////////////////////////////
@@ -608,17 +626,17 @@
     reductionAmount = newReductionAmount;
     }
     
+
+    function setPayoutMultiplier(uint256 newPayoutMultiplier) external onlyOwner {
+    require(newPayoutMultiplier > 100, "Multiplier must be greater than 100"); // Можно установить минимальное ограничение
+    payoutMultiplier = newPayoutMultiplier;
+    }
+
+
     // Функция для изменения коэффициента, доступная только владельцу контракта
     function setRatioMultiplier(uint256 _newMultiplier) external onlyOwner {
     require(_newMultiplier > 0, "Multiplier must be greater than 0");
     ratioMultiplier = _newMultiplier;
-    }
-
-    
-    // Функция для изменения значения maxFreeUsers
-    function setMaxFreeUsers(uint256 newMaxFreeUsers) public onlyOwner {
-    require(newMaxFreeUsers > freeDepositsCount, "New value must be greater than current freeDepositsCount");
-    maxFreeUsers = newMaxFreeUsers;
     }
 
 
@@ -626,7 +644,12 @@
     require(newPayoutCycle > 0, "Payout cycle must be greater than 0");
     payoutCycle = newPayoutCycle;
     }
-
+    
+    // Функция для изменения значения maxFreeUsers
+    function setMaxFreeUsers(uint256 newMaxFreeUsers) public onlyOwner {
+    require(newMaxFreeUsers > freeDepositsCount, "New value must be greater than current freeDepositsCount");
+    maxFreeUsers = newMaxFreeUsers;
+    }
 
 
     function setDepositAmount(uint256 index, uint256 newAmount) external onlyOwner {
@@ -644,86 +667,22 @@
 
     // ///////////////////////////////////////////////////////////
 
-
-        // Добавляем внешний контракт в массив
-    function addExternalContract(address _externalContract) public onlyOwner {
-        externalContracts.push(_externalContract);
-    }
-
-    // Добавляем флаг игроку
-    function addRegistrationFlag(address _player, uint256 _flag) public onlyOwner {
-    Player storage player = players[_player];
-
-    // Устанавливаем значение true для флага в mapping
-    player.registrationFlags[_flag] = true;
-    }
+    // Функция для изменения адреса внешнего контракта
+function setExternalContract(address _newExternalContract) external onlyOwner {
+    require(_newExternalContract != address(0), "Invalid external contract address");
+    externalContractAddress = _newExternalContract;
+}
 
 
-    function removeRegistrationFlag(address _player, uint256 _flag) public onlyOwner {
-    Player storage player = players[_player];
-
-    // Удаляем флаг из mapping
-    delete player.registrationFlags[_flag];
-    }
-
-
-
-
-
-
-      // Добавляем флаг игроку
-    function addFlag(address _player, uint256 _flag) public onlyOwner {
-    Player storage player = players[_player];
-
-    // Устанавливаем флаг по ключу
-    player.flags[_flag] = true;
-    }
-
-    // Удаление флага 
-   function removeFlag(address _player, uint256 _flag) public onlyOwner {
-    Player storage player = players[_player];
-
-    // Удаляем флаг по ключу
-    delete player.flags[_flag];
-    }
-
-    // Функция для просмотра флагов, доступна только если player.hasFinished == true
-    function getAvailableFlag(address _player, uint256 _flag) public view returns (bool) {
-    Player storage player = players[_player];
-
-    // Проверяем, что игрок завершил все депозиты (игру)
-    require(player.hasFinished, "Player has not finished the game");
-
-    // Возвращаем флаг, если игрок завершил игру
-    return player.flags[_flag];
-    }
 
 
     // ////////////////////////////////////////////////////////////////////
 
      
-    function countPlayersWithDeposits(uint256 depositIndex) internal view returns (uint256) {
-    uint256 count = 0;
-    for (uint256 i = 0; i < playersArray.length; i++) {  // playersArray — массив всех игроков
-        if (players[playersArray[i]].depositIndex == depositIndex && players[playersArray[i]].madeDeposit) {
-            count++;
-        }
-    }
-    return count;
-    }
-
-    function countPlayersWaitingForPayout(uint256 depositIndex) internal view returns (uint256) {
-    uint256 count = 0;
-    for (uint256 i = 0; i < playersArray.length; i++) {  // playersArray — массив всех игроков
-        if (players[playersArray[i]].depositIndex == depositIndex && !players[playersArray[i]].receivedPayout) {
-            count++;
-        }
-    }
-    return count;
-    }
+   
 
 
-
+     
    
      // Функция для получения данных о текущем депозите игрока
     function getCurrentDepositData() external view returns (uint256 depositAmount, uint256 depositIndex, uint256 budget) {
@@ -756,7 +715,7 @@
     return budgets;
     }
 
-
+    
 
 
 
