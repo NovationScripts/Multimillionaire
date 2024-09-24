@@ -30,9 +30,9 @@
    uint256 public payoutAttemptInterval = 90 hours;  // Интервал между выплатами
    uint256 public minWaitingTime = 30 hours; // Минимальное время ожидания
    uint256 public reductionAmount = 30 hours; // Величина уменьшения времени
+
    uint256 public contractEarnings; // Переменная для хранения заработков контракта
    uint256 public reserveBudget; // Переменная для резервного бюджета
-   
    uint256 public totalDepositsCount;
    uint256 public freeDepositsCount; // Счётчик пользователей с бесплатным депозитом
    uint256 public totalReferralEarnings = 0; // Total referral earnings
