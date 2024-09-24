@@ -251,8 +251,6 @@
     uint256 referralWithdrawals; // Variable added to track the total amount of withdrawals made by referrals
     uint256 lastDepositTime; // Time of the player's last deposit;
     uint256 nextPayoutAttemptTime; // Time of the player's next payout attempt
-    mapping(uint256 => bool) flags; // Массив флагов игрока после прохождения игры
-    mapping(uint256 => bool) registrationFlags; // Mapping флагов для регистрации
     }
 
 
