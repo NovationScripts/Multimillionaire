@@ -1,4 +1,4 @@
-            // SPDX-License-Identifier: MIT 
+        // SPDX-License-Identifier: MIT 
 
     pragma solidity ^0.8.0;
     import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -41,6 +41,10 @@
   
 
 
+
+
+
+    // /////////////////////////////////////////////////////
    // ERC-20 токен логика
    string public name = "Multimillionaire Token";
    string public symbol = "MTK";
@@ -61,11 +65,41 @@
    }
 
 
-   // /////////////////////////////////////////////////////////////
 
-   
+   // Функция для перевода токенов
+   function transfer(address _to, uint256 _value) public returns (bool success) {
+      require(balanceOf[msg.sender] >= _value, "Insufficient balance");
+      balanceOf[msg.sender] -= _value;
+      balanceOf[_to] += _value;
+      emit Transfer(msg.sender, _to, _value);
+      return true;
+   }
 
-   // Modifier to ensure that only the contract owner can call certain functions
+   // Функция для одобрения перевода токенов
+   function approve(address _spender, uint256 _value) public returns (bool success) {
+      allowance[msg.sender][_spender] = _value;
+      emit Approval(msg.sender, _spender, _value);
+      return true;
+   }
+
+    // Функция для перевода токенов от имени владельца
+   function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
+      require(_value <= balanceOf[_from], "Insufficient balance");
+      require(_value <= allowance[_from][msg.sender], "Allowance exceeded");
+      balanceOf[_from] -= _value;
+      balanceOf[_to] += _value;
+      allowance[_from][msg.sender] -= _value;
+      emit Transfer(_from, _to, _value);
+      return true;
+   }
+	
+	
+	// ////////////////////////////////////////////////////////
+
+
+
+    
+    // Modifier to ensure that only the contract owner can call certain functions
     modifier onlyOwner() {
     // Check that the message sender is the owner of the contract
     require(msg.sender == owner, "Caller is not the owner");
@@ -97,39 +131,25 @@
     }
 
 
+    // //////////////////////////////////////////////////////////////////////
 
 
-    // /////////////////////////////////////////////////////
 
-   // Функция для перевода токенов
-   function transfer(address _to, uint256 _value) public returns (bool success) {
-      require(balanceOf[msg.sender] >= _value, "Insufficient balance");
-      balanceOf[msg.sender] -= _value;
-      balanceOf[_to] += _value;
-      emit Transfer(msg.sender, _to, _value);
-      return true;
-   }
+     // Data structure for a player
+    struct Player {
+    address referrer; // Address of the player who referred this player
+    uint256 referralEarnings; // Amount earned by the player from referrals
+    uint256 depositIndex;  // Индекс депозита, который игрок должен внести следующим
+    uint256 deposit; // Amount of token deposited by the player
+    bool madeDeposit;  // Флаг, указывающий, сделал ли игрок депозит
+    bool receivedPayout;  // Флаг, указывающий, получил ли игрок выплату
+    bool hasFinished; // Flag to track whether the player has finished the game
+    uint256 referralWithdrawals; // Variable added to track the total amount of withdrawals made by referrals
+    uint256 lastDepositTime; // Time of the player's last deposit;
+    uint256 nextPayoutAttemptTime; // Time of the player's next payout attempt
+    }
 
-   // Функция для одобрения перевода токенов
-   function approve(address _spender, uint256 _value) public returns (bool success) {
-      allowance[msg.sender][_spender] = _value;
-      emit Approval(msg.sender, _spender, _value);
-      return true;
-   }
 
-    // Функция для перевода токенов от имени владельца
-   function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
-      require(_value <= balanceOf[_from], "Insufficient balance");
-      require(_value <= allowance[_from][msg.sender], "Allowance exceeded");
-      balanceOf[_from] -= _value;
-      balanceOf[_to] += _value;
-      allowance[_from][msg.sender] -= _value;
-      emit Transfer(_from, _to, _value);
-      return true;
-   }
-	
-	
-	
     uint256[] public depositAmounts = [
     120200000000000000,  // 0.1202 токена  - самый первый депозит
     131000000000000000,  // 0.1310 токена
@@ -239,19 +259,7 @@
 
    
 
-    // Data structure for a player
-    struct Player {
-    address referrer; // Address of the player who referred this player
-    uint256 referralEarnings; // Amount earned by the player from referrals
-    uint256 depositIndex;  // Индекс депозита, который игрок должен внести следующим
-    uint256 deposit; // Amount of token deposited by the player
-    bool madeDeposit;  // Флаг, указывающий, сделал ли игрок депозит
-    bool receivedPayout;  // Флаг, указывающий, получил ли игрок выплату
-    bool hasFinished; // Flag to track whether the player has finished the game
-    uint256 referralWithdrawals; // Variable added to track the total amount of withdrawals made by referrals
-    uint256 lastDepositTime; // Time of the player's last deposit;
-    uint256 nextPayoutAttemptTime; // Time of the player's next payout attempt
-    }
+   
 
 
 
