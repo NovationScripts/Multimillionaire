@@ -1,4 +1,4 @@
-        // SPDX-License-Identifier: MIT 
+            // SPDX-License-Identifier: MIT 
 
     pragma solidity ^0.8.0;
     import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -10,36 +10,35 @@
 
 
    contract MultimillionaireToken is ReentrancyGuard {
-   // Constants for fund distribution
+
+   address public owner; // Owner of the contract
+   address public externalContractAddress; //  Store address of external contract
+   address[] public playersArray; // Массив для хранения всех адресов игроков
+   mapping(address => Player) public players; // Mapping of player addresses to their PlayerData
+   mapping(uint256 => uint256) public depositBudgets; // Бюджеты для депозитов
+   mapping(uint256 => uint256) public payoutsPerDeposit;
+   mapping(address => uint256) public totalPayouts;  // Mapping to track total payouts for each player
+   mapping(address => bool) public canSponsorFirstDeposit; // Добавляем переменную-флаг для отслеживания состояния оплаты первого депозита реферером
+
    uint256 public contractCommission = 50; // 0.5% Contract commission percentage
    uint256 public firstLineReferralCommission = 40; // 0.4% с депозита первой линии
    uint256 public secondLineReferralCommission = 30; // 0.3% с депозита второй линии
    uint256 public payoutMultiplier = 109; // Payout multiplier
    uint256 public ratioMultiplier = 10; // Соотношение очереди при котором применяется резервный бюджет
    uint256 public payoutCycle = 5; // Число, кратное которому будут проверяться успешные выплаты
-   uint256 public contractEarnings; // Переменная для хранения заработков контракта
-   uint256 public reserveBudget; // Переменная для резервного бюджета
-   mapping(uint256 => uint256) public payoutsPerDeposit;
-   mapping(uint256 => uint256) public depositBudgets; // Бюджеты для депозитов
-   mapping(address => uint256) public totalPayouts;  // Mapping to track total payouts for each player
-   mapping(address => Player) public players; // Mapping of player addresses to their PlayerData
-   mapping(address => bool) public canSponsorFirstDeposit; // Добавляем переменную-флаг для отслеживания состояния оплаты первого депозита реферером
-   uint256 public totalDepositsCount;
-   uint256 public freeDepositsCount; // Счётчик пользователей с бесплатным депозитом
    uint256 public maxFreeUsers = 1000000; // Максимальное количество бесплатных первых депозитов
-
-   address[] public playersArray; // Массив для хранения всех адресов игроков
-
-   address public externalContractAddress; //  Store address of external contract
-   
-   // Contract state variables
-   address public owner; // Owner of the contract
-   uint256 public totalReferralEarnings = 0; // Total referral earnings
-   uint256 public totalReferralWithdrawals = 0; // Total referral withdrawals
-   uint256 public totalPlayerCount; // Total number of players counter
    uint256 public payoutAttemptInterval = 90 hours;  // Интервал между выплатами
    uint256 public minWaitingTime = 30 hours; // Минимальное время ожидания
    uint256 public reductionAmount = 30 hours; // Величина уменьшения времени
+   uint256 public contractEarnings; // Переменная для хранения заработков контракта
+   uint256 public reserveBudget; // Переменная для резервного бюджета
+   
+   uint256 public totalDepositsCount;
+   uint256 public freeDepositsCount; // Счётчик пользователей с бесплатным депозитом
+   uint256 public totalReferralEarnings = 0; // Total referral earnings
+   uint256 public totalReferralWithdrawals = 0; // Total referral withdrawals
+   uint256 public totalPlayerCount; // Total number of players counter
+  
 
 
    // ERC-20 токен логика
