@@ -20,9 +20,9 @@
    mapping(address => uint256) public totalPayouts;  // Mapping to track total payouts for each player
    mapping(address => bool) public canSponsorFirstDeposit; // Добавляем переменную-флаг для отслеживания состояния оплаты первого депозита реферером
 
-   uint256 public contractCommission = 50; // 0.5% Contract commission percentage
-   uint256 public firstLineReferralCommission = 40; // 0.4% с депозита первой линии
-   uint256 public secondLineReferralCommission = 30; // 0.3% с депозита второй линии
+   uint256 public contractCommission = 70; // 0.7% Contract commission percentage
+   uint256 public firstLineReferralCommission = 70; // 0.7% с депозита первой линии
+   uint256 public secondLineReferralCommission = 50; // 0.5% с депозита второй линии
    uint256 public payoutMultiplier = 109; // Payout multiplier
    uint256 public ratioMultiplier = 10; // Соотношение очереди при котором применяется резервный бюджет
    uint256 public payoutCycle = 5; // Число, кратное которому будут проверяться успешные выплаты
