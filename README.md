@@ -17,6 +17,8 @@ This version includes flag verification during registration and the addition of 
 
 We could say that players confirm blocks with their deposits.
 
+There may be significant token issuance, but an exponential influx of new players can curb inflation. Moreover, these tokens can be stored, used for transactions, and this might be an experimental project, making it uncertain how users will behave
+
 If the errors are fixed, it might actually work. The contract compiles and deploys, but errors occur during testing. If optimization cannot be improved further, it's time to move on to the debugging stage.
 
 If you have any thoughts, you can leave them in the discussions of this repository. https://github.com/NovationScripts/Multimillionaire/discussions
