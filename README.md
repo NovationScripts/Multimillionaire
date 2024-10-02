@@ -17,7 +17,7 @@ This version includes flag verification during registration and the addition of 
 
 We could say that players confirm blocks with their deposits.
 
-There may be significant token issuance, but an exponential influx of new players can curb inflation. Moreover, these tokens can be stored, used for transactions, and this might be an experimental project, making it uncertain how users will behave. What if we create a DEX with the following structure: 1 Token #1 = 1 ETH, 500 Token #1 = 1 Token #2, and 1 Token #2 = 500 ETH, it would create an interesting closed-loop exchange system. For better stability, the waiting time and limits per account can be adjusted.
+There may be significant token issuance, but an exponential influx of new players can curb inflation. Moreover, these tokens can be stored, used for transactions, and this might be an experimental project, making it uncertain how users will behave. What if we create a DEX with the following structure: 1 Token #1 = 1 ETH, 500 Token #1 = 1 Token #2, and 1 Token #2 = 500 ETH, it would create an interesting closed-loop exchange system. For better stability, the waiting time and limits per account can be adjusted. The Token #2 contract and the DEX are also ready and need testing and debugging.
 
 If the errors are fixed, it might actually work. The contract compiles and deploys, but errors occur during testing. If optimization cannot be improved further, it's time to move on to the debugging stage.
 
