@@ -1,4 +1,4 @@
- // SPDX-License-Identifier: MIT
+   // SPDX-License-Identifier: MIT
    pragma solidity ^0.8.27;
 
    import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -31,7 +31,7 @@
    uint256 public payoutAttemptInterval = 90 hours;  // Интервал между выплатами
    uint256 public minWaitingTime = 30 hours; // Минимальное время ожидания
    uint256 public reductionAmount = 30 hours; // Величина уменьшения времени
-   uint256 public topReferralRank = 1000; // Количество топовых рефералов, которые получают надбавку
+   uint256 public topReferrerRank = 1000; // Количество топовых рефералов, которые получают надбавку
    uint256 public referralBonusPercentage = 10; // Процент надбавки к реферальным средствам
    uint256 public referrerBonusPercentage = 10; // Процент бонуса для реферера 
 
@@ -93,23 +93,30 @@
     modifier topReferralModifier(address _player) {
     require(players[_player].referrer != address(0), "Not a registered player");
 
-    // Определяем количество рефералов первой линии
+    // Определяем количество рефералов первой линии для текущего игрока
     uint256 firstLineReferralCount = getFirstLineReferralCount(_player);
-    
-    // Если количество рефералов больше, чем минимальное значение для топа
-    if (firstLineReferralCount >= topReferralRank) {
-        // Рассчитываем надбавку
+
+    // Проверяем, что игрок входит в топ-1000 по количеству рефералов на первой линии
+    if (firstLineReferralCount >= topReferrerRank) {
+        // Рассчитываем бонус, который игрок получит за нахождение в топе
         uint256 bonusAmount = (players[_player].referralEarnings * referralBonusPercentage) / 100;
 
-        // Проверяем, достаточно ли средств в `reserveBudget` для надбавки
+        // Проверяем, достаточно ли средств в резервном бюджете для начисления бонуса
         require(reserveBudget >= bonusAmount, "Insufficient reserve budget for bonus");
 
-        // Вычитаем средства из `contractBudget` и добавляем к реферальным заработкам
+        // Вычитаем бонус из резервного бюджета
         reserveBudget -= bonusAmount;
+
+        // Добавляем бонус к реферальным заработкам игрока
         players[_player].referralEarnings += bonusAmount;
+
+        // Логируем начисление бонуса
+        emit Transfer(address(this), _player, bonusAmount);
     }
+
     _;
     }
+
 
     // //////////////////////////////////////////////////////////////////////
 
@@ -290,7 +297,7 @@
     // или если он получил выплату за предыдущий депозит
     return player.depositIndex == 0 || player.receivedPayout;
     }
-
+    // ///////
 
     
     
@@ -537,7 +544,7 @@
     }
 
     // ////////////////////////
-    function withdrawReferralEarnings() external nonReentrant onlyPlayer {
+   function withdrawReferralEarnings() external nonReentrant onlyPlayer topReferralModifier(msg.sender) {
     Player storage player = players[msg.sender];
     uint256 amount = player.referralEarnings;
 
@@ -546,25 +553,6 @@
 
     // Получаем адрес реферера
     address referrer = player.referrer;
-
-    // Проверяем, входит ли текущий игрок в топ-1000 по количеству рефералов первой линии
-    uint256 firstLineReferralCount = getFirstLineReferralCount(msg.sender);
-    if (firstLineReferralCount >= topReferralRank) {
-        // Рассчитываем бонус для игрока (например, 10% от текущей суммы)
-        uint256 bonusAmount = (amount * referrerBonusPercentage) / 100;
-
-        // Проверяем, что резервный бюджет контракта может покрыть этот бонус
-        require(reserveBudget >= bonusAmount, "Insufficient reserve budget for bonus");
-
-        // Увеличиваем реферальные заработки игрока на бонус
-        amount += bonusAmount;
-
-        // Списываем бонус из резервного бюджета
-        reserveBudget -= bonusAmount;
-
-        // Логируем начисление бонуса
-        emit Transfer(address(this), msg.sender, bonusAmount);
-    }
 
     // Рассчитываем процент для реферера (10% от новой суммы, включая бонус), если реферер существует
     uint256 bonusToReferrer = 0;
@@ -578,7 +566,7 @@
         emit Transfer(address(this), referrer, bonusToReferrer);
     }
 
-    // Вычитаем бонус для реферера из общей суммы, которую получит игрок, если реферер есть
+    // Вычитаем бонус для реферера из общей суммы, которую получит игрок
     uint256 withdrawalAmount = amount - bonusToReferrer;
 
     // Обновляем данные о выводе для игрока
@@ -598,6 +586,7 @@
     _transfer(address(this), msg.sender, withdrawalAmount);
     emit Transfer(address(this), msg.sender, withdrawalAmount);
     }
+
 
 
 
@@ -714,10 +703,14 @@
 
      
 
-    function setTopReferralParameters(uint256 _topReferralRank, uint256 _referralBonusPercentage) external onlyOwner {
-    require(_topReferralRank > 0, "Top referral rank must be greater than 0");
-    require(_referralBonusPercentage >= 0, "Bonus percentage must be positive");
-    topReferralRank = _topReferralRank;
+   function setTopReferralParameters(uint256 _topReferrerRank, uint256 _referralBonusPercentage) external onlyOwner {
+    require(_topReferrerRank > 0, "Top referral rank must be greater than 0");
+    
+    
+    require(_referralBonusPercentage >= 0 && _referralBonusPercentage <= 100, "Bonus percentage must be between 0 and 100");
+
+    // Обновляем параметры
+    topReferrerRank = _topReferrerRank;
     referralBonusPercentage = _referralBonusPercentage;
     }
 
@@ -728,7 +721,10 @@
     }
     
 
-   // ///////////
+
+
+
+    // ///////////////////////////////////////////////////////////
 
     // Функция для изменения адреса внешнего контракта
     function setExternalContract(address _newExternalContract) external onlyOwner {
@@ -778,12 +774,7 @@
     return budgets;
     }
 
-    
-    // //////////////////////////////////////////////////////
 
-
-
-    
 
 
     // //////////////////////////////////////////////////////
