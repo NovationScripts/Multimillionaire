@@ -396,7 +396,7 @@
     return isBudgetAvailable && isTimeElapsed;
     }
 
-
+    // ////////////////
     function requestPayout() external {
     Player storage player = players[msg.sender];
 
@@ -432,7 +432,7 @@
 
 
 
-   function processPayments() internal nonReentrant onlyPlayer {
+    function processPayments() internal nonReentrant onlyPlayer {
     Player storage player = players[msg.sender];
 
     // Проверяем, что игрок внёс депозит и ещё не получил выплату
@@ -508,7 +508,7 @@
 
     // //////////////////
      
-      function countPlayersWithDeposits(uint256 depositIndex) internal view returns (uint256) {
+    function countPlayersWithDeposits(uint256 depositIndex) internal view returns (uint256) {
     uint256 count = 0;
     for (uint256 i = 0; i < playersArray.length; i++) {  // playersArray — массив всех игроков
         if (players[playersArray[i]].depositIndex == depositIndex && players[playersArray[i]].madeDeposit) {
@@ -542,7 +542,7 @@
     }
 
     // ////////////////////////
-   function withdrawReferralEarnings() external nonReentrant onlyPlayer topReferralModifier(msg.sender) {
+    function withdrawReferralEarnings() external nonReentrant onlyPlayer topReferralModifier(msg.sender) {
     Player storage player = players[msg.sender];
     uint256 amount = player.referralEarnings;
 
@@ -652,7 +652,7 @@
 
 
 
-     function changePayoutAttemptTime(uint256 newInterval) public onlyOwner {
+    function changePayoutAttemptTime(uint256 newInterval) public onlyOwner {
     payoutAttemptInterval = newInterval;
     }
 
@@ -724,7 +724,7 @@
 
      
 
-   function setTopReferralParameters(uint256 _topReferrerRank, uint256 _referralBonusPercentage) external onlyOwner {
+    function setTopReferralParameters(uint256 _topReferrerRank, uint256 _referralBonusPercentage) external onlyOwner {
     require(_topReferrerRank > 0, "Top referral rank must be greater than 0");
     
     
