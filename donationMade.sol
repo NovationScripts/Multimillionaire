@@ -1,40 +1,30 @@
-    // SPDX-License-Identifier: MIT
-    pragma solidity ^0.8.0;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
 
-
-    // Контракт для донатов, разрешающий донат только один раз
-    contract DonationContract {
+contract DonationContract {
     // Маппинг для хранения информации о том, сделал ли игрок пожертвование
     mapping(address => bool) public donationMade;
 
     // Минимальная сумма доната (по умолчанию 0.01 ETH)
     uint256 public minimumDonationAmount = 0.01 ether;
 
-    // Процентные доли для распределения донатов
-    uint256 public mainDonationPercentage = 90;
-    uint256 public secondaryDonationPercentage = 10;
-
-    // Адреса для распределения донатов
-    address public mainDonationAddress;
-    address public secondaryDonationAddress;
+    // Адреса для распределения донатов и их проценты
+    address[] public donationWallets;
+    uint256[] public donationPercentages;
 
     // Адрес владельца контракта
     address public owner;
 
-    // Событие для логирования донатов
+    // События
     event DonationReceived(address indexed player, uint256 amount);
     event MinimumDonationAmountChanged(uint256 newAmount);
-    event DonationAddressesChanged(address newMainAddress, address newSecondaryAddress);
-    event DonationPercentagesChanged(uint256 newMainPercentage, uint256 newSecondaryPercentage);
+    event DonationWalletAdded(address wallet, uint256 percentage);
+    event DonationWalletRemoved(address wallet);
+    event DonationWalletUpdated(address wallet, uint256 percentage);
 
-    // Конструктор для установки владельца контракта и адресов донатов
-    constructor(address _mainDonationAddress, address _secondaryDonationAddress) {
-        require(_mainDonationAddress != address(0), "Main donation address cannot be the zero address");
-        require(_secondaryDonationAddress != address(0), "Secondary donation address cannot be the zero address");
-
+    // Конструктор для установки владельца контракта
+    constructor() {
         owner = msg.sender;
-        mainDonationAddress = _mainDonationAddress;
-        secondaryDonationAddress = _secondaryDonationAddress;
     }
 
     // Модификатор для функций, которые может вызывать только владелец
@@ -54,16 +44,14 @@
         // Обновляем статус пожертвования игрока
         donationMade[msg.sender] = true;
 
-        // Вычисляем суммы для основного и вторичного адресов на основе процентных долей
-        uint256 mainDonationAmount = (msg.value * mainDonationPercentage) / 100;
-        uint256 secondaryDonationAmount = (msg.value * secondaryDonationPercentage) / 100;
+        // Проверяем, что все проценты в сумме составляют 100%
+        require(totalPercentage() == 100, "Total percentage must be 100%");
 
-        // Проверяем, что процентные доли составляют ровно 100%
-        require(mainDonationPercentage + secondaryDonationPercentage == 100, "Percentages must sum to 100");
-
-        // Отправляем средства на основной и вторичный адреса
-        payable(mainDonationAddress).transfer(mainDonationAmount);
-        payable(secondaryDonationAddress).transfer(secondaryDonationAmount);
+        // Распределяем средства по кошелькам согласно процентам
+        for (uint256 i = 0; i < donationWallets.length; i++) {
+            uint256 walletAmount = (msg.value * donationPercentages[i]) / 100;
+            payable(donationWallets[i]).transfer(walletAmount);
+        }
 
         // Логируем пожертвование
         emit DonationReceived(msg.sender, msg.value);
@@ -78,31 +66,64 @@
         emit MinimumDonationAmountChanged(_newAmount);
     }
 
-    // Функции для изменения адресов донатов (только для владельца)
-    function setDonationAddresses(address _newMainAddress, address _newSecondaryAddress) external onlyOwner {
-        require(_newMainAddress != address(0), "Main donation address cannot be the zero address");
-        require(_newSecondaryAddress != address(0), "Secondary donation address cannot be the zero address");
+    // Функция для добавления нового кошелька и процента (только для владельца)
+    function addDonationWallet(address _wallet, uint256 _percentage) external onlyOwner {
+        require(_wallet != address(0), "Invalid wallet address");
+        require(_percentage > 0, "Percentage must be greater than 0");
+        require(totalPercentage() + _percentage <= 100, "Total percentage exceeds 100");
 
-        mainDonationAddress = _newMainAddress;
-        secondaryDonationAddress = _newSecondaryAddress;
+        donationWallets.push(_wallet);
+        donationPercentages.push(_percentage);
 
-        // Логируем изменение адресов
-        emit DonationAddressesChanged(_newMainAddress, _newSecondaryAddress);
+        // Логируем добавление кошелька
+        emit DonationWalletAdded(_wallet, _percentage);
     }
 
-    // Функция для изменения процентных долей распределения донатов (только для владельца)
-    function setDonationPercentages(uint256 _newMainPercentage, uint256 _newSecondaryPercentage) external onlyOwner {
-        require(_newMainPercentage + _newSecondaryPercentage == 100, "Percentages must sum to 100");
+    // Функция для удаления кошелька (только для владельца)
+    function removeDonationWallet(uint256 index) external onlyOwner {
+        require(index < donationWallets.length, "Index out of bounds");
 
-        mainDonationPercentage = _newMainPercentage;
-        secondaryDonationPercentage = _newSecondaryPercentage;
+        // Логируем удаление кошелька
+        emit DonationWalletRemoved(donationWallets[index]);
 
-        // Логируем изменение процентных долей
-        emit DonationPercentagesChanged(_newMainPercentage, _newSecondaryPercentage);
+        // Удаляем кошелек и его процент
+        for (uint256 i = index; i < donationWallets.length - 1; i++) {
+            donationWallets[i] = donationWallets[i + 1];
+            donationPercentages[i] = donationPercentages[i + 1];
+        }
+        donationWallets.pop();
+        donationPercentages.pop();
+    }
+
+    // Функция для обновления кошелька и его процента (только для владельца)
+    function updateDonationWallet(uint256 index, address _newWallet, uint256 _newPercentage) external onlyOwner {
+        require(index < donationWallets.length, "Index out of bounds");
+        require(_newWallet != address(0), "Invalid wallet address");
+        require(_newPercentage > 0, "Percentage must be greater than 0");
+
+        // Обновляем адрес кошелька и его процент
+        donationWallets[index] = _newWallet;
+        donationPercentages[index] = _newPercentage;
+
+        // Проверяем, что общая сумма процентов все еще равна 100%
+        require(totalPercentage() == 100, "Total percentage must be 100%");
+
+        // Логируем изменение кошелька
+        emit DonationWalletUpdated(_newWallet, _newPercentage);
+    }
+
+    // Функция для расчета общей суммы процентов
+    function totalPercentage() public view returns (uint256) {
+        uint256 total = 0;
+        for (uint256 i = 0; i < donationPercentages.length; i++) {
+            total += donationPercentages[i];
+        }
+        return total;
     }
 
     // Функция для вывода средств с контракта владельцем (в случае, если на контракте остались средства)
     function withdraw() external onlyOwner {
         payable(owner).transfer(address(this).balance);
     }
-    }
+}
+
