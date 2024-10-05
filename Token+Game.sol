@@ -31,7 +31,7 @@
    uint256 public payoutAttemptInterval = 90 hours;  // Интервал между выплатами
    uint256 public minWaitingTime = 30 hours; // Минимальное время ожидания
    uint256 public reductionAmount = 30 hours; // Величина уменьшения времени
-   uint256 public referrerBonusPercentage = 10; // Процент бонуса для реферера 
+   
 
    uint256 public contractEarnings; // Переменная для хранения заработков контракта
    uint256 public reserveBudget; // Переменная для резервного бюджета
@@ -526,27 +526,9 @@
     // Проверяем, что есть реферальные заработки для вывода
     require(amount > 0, "No referral earnings to withdraw");
 
-    // Получаем адрес реферера
-    address referrer = player.referrer;
-
-    // Рассчитываем процент для реферера (если реферер существует)
-    uint256 bonusToReferrer = 0;
-    if (referrer != address(0)) {
-        bonusToReferrer = (amount * referrerBonusPercentage) / 100;
-
-        // Переводим бонус на внутренний реферальный счёт реферера
-        players[referrer].referralEarnings += bonusToReferrer;
-
-        // Логируем событие перевода бонуса рефереру
-        emit Transfer(address(this), referrer, bonusToReferrer);
-    }
-
-    // Вычитаем бонус для реферера из общей суммы, которую получит игрок
-    uint256 withdrawalAmount = amount - bonusToReferrer;
-
     // Обновляем данные о выводе для игрока
-    player.referralWithdrawals += withdrawalAmount;
-    totalReferralWithdrawals += withdrawalAmount;
+    player.referralWithdrawals += amount;
+    totalReferralWithdrawals += amount;
 
     // Уменьшаем общую сумму реферальных заработков
     totalReferralEarnings -= amount;
@@ -555,12 +537,13 @@
     player.referralEarnings = 0;
 
     // Логируем событие вывода реферальных средств
-    emit ReferralWithdrawalMade(msg.sender, withdrawalAmount);
+    emit ReferralWithdrawalMade(msg.sender, amount);
 
-    // Переводим оставшиеся реферальные заработки игроку
-    _transfer(address(this), msg.sender, withdrawalAmount);
-    emit Transfer(address(this), msg.sender, withdrawalAmount);
+    // Переводим реферальные заработки игроку
+    _transfer(address(this), msg.sender, amount);
+    emit Transfer(address(this), msg.sender, amount);
     }
+
 
 
     
@@ -663,15 +646,6 @@
     }
 
      
-   
-    function setReferrerBonusPercentage(uint256 _newPercentage) external onlyOwner {
-    require(_newPercentage >= 0 && _newPercentage <= 100, "Bonus percentage must be between 0 and 100");
-    referrerBonusPercentage = _newPercentage;
-    }
-    
-
-
-
 
     // ///////////////////////////////////////////////////////////
 
