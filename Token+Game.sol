@@ -1,17 +1,18 @@
-        // SPDX-License-Identifier: MIT 
+ // SPDX-License-Identifier: MIT
+   pragma solidity ^0.8.27;
 
-    pragma solidity ^0.8.0;
-    import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-   
+   import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+   import "@openzeppelin/contracts/access/Ownable.sol";
+   import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
     // Интерфейс для взаимодействия с внешним контрактом
    interface IExternalContract {
    function getFlags(address _player) external view returns (uint256[] memory);
    }
 
+   contract MultimillionaireToken is ERC20, ReentrancyGuard, Ownable {
 
-   contract MultimillionaireToken is ReentrancyGuard {
-
-   address public owner; // Owner of the contract
+    
    address public externalContractAddress; //  Store address of external contract
    address[] public playersArray; // Массив для хранения всех адресов игроков
    mapping(address => Player) public players; // Mapping of player addresses to their PlayerData
@@ -26,10 +27,13 @@
    uint256 public payoutMultiplier = 109; // Payout multiplier
    uint256 public ratioMultiplier = 10; // Соотношение очереди при котором применяется резервный бюджет
    uint256 public payoutCycle = 5; // Число, кратное которому будут проверяться успешные выплаты
-   uint256 public maxFreeUsers = 1000000; // Максимальное количество бесплатных первых депозитов
+   uint256 public maxFreeUsers = 10000; // Максимальное количество бесплатных первых депозитов
    uint256 public payoutAttemptInterval = 90 hours;  // Интервал между выплатами
    uint256 public minWaitingTime = 30 hours; // Минимальное время ожидания
    uint256 public reductionAmount = 30 hours; // Величина уменьшения времени
+   uint256 public topReferralRank = 1000; // Количество топовых рефералов, которые получают надбавку
+   uint256 public referralBonusPercentage = 10; // Процент надбавки к реферальным средствам
+   uint256 public referrerBonusPercentage = 10; // Процент бонуса для реферера 
 
    uint256 public contractEarnings; // Переменная для хранения заработков контракта
    uint256 public reserveBudget; // Переменная для резервного бюджета
@@ -45,66 +49,21 @@
 
 
     // /////////////////////////////////////////////////////
-   // ERC-20 токен логика
-   string public name = "Multimillionaire Token";
-   string public symbol = "MTK";
-   uint8 public decimals = 18;
-   uint256 public totalSupply;
-   mapping(address => uint256) public balanceOf;
-   mapping(address => mapping(address => uint256)) public allowance;
-
-   event Transfer(address indexed from, address indexed to, uint256 value);
-   event Approval(address indexed owner, address indexed spender, uint256 value);
-
-   constructor() {
-      owner = msg.sender; // Назначаем владельца контракта
-      totalSupply = 109999999999999999999999999999999999999999999999999999999999 * 10**18; // Инициализируем общее количество токенов
-      reserveBudget = totalSupply; // Перемещаем все токены в резервный бюджет
-      balanceOf[address(this)] = totalSupply;
-      emit Transfer(address(0), address(this), totalSupply); // Событие минтинга
-   }
 
 
 
-   // Функция для перевода токенов
-   function transfer(address _to, uint256 _value) public returns (bool success) {
-      require(balanceOf[msg.sender] >= _value, "Insufficient balance");
-      balanceOf[msg.sender] -= _value;
-      balanceOf[_to] += _value;
-      emit Transfer(msg.sender, _to, _value);
-      return true;
-   }
 
-   // Функция для одобрения перевода токенов
-   function approve(address _spender, uint256 _value) public returns (bool success) {
-      allowance[msg.sender][_spender] = _value;
-      emit Approval(msg.sender, _spender, _value);
-      return true;
-   }
+    constructor() ERC20("Multimillionaire Token", "MTK") Ownable(msg.sender) {
+    uint256 initialSupply = 109999999999999999999999999999999999999999999999999999999999 * 10**18;
+    _mint(address(this), initialSupply);
+    reserveBudget = initialSupply;
+    }
 
-    // Функция для перевода токенов от имени владельца
-   function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
-      require(_value <= balanceOf[_from], "Insufficient balance");
-      require(_value <= allowance[_from][msg.sender], "Allowance exceeded");
-      balanceOf[_from] -= _value;
-      balanceOf[_to] += _value;
-      allowance[_from][msg.sender] -= _value;
-      emit Transfer(_from, _to, _value);
-      return true;
-   }
-	
-	
+
+
+
 	// ////////////////////////////////////////////////////////
 
-
-
-    
-    // Modifier to ensure that only the contract owner can call certain functions
-    modifier onlyOwner() {
-    // Check that the message sender is the owner of the contract
-    require(msg.sender == owner, "Caller is not the owner");
-    _; // Continue execution of the function
-    }
 
     // Modifier to ensure that only registered players can call certain functions
     modifier onlyPlayer() {
@@ -114,7 +73,7 @@
     _; // Continue execution of the function
     }
 
-
+    // /////////////////
     modifier checkRegistrationFlagsWithExternalContracts(address _player) {
     require(externalContractAddress != address(0), "No external contract set");
 
@@ -130,6 +89,27 @@
     _;
     }
 
+    // //////////////////
+    modifier topReferralModifier(address _player) {
+    require(players[_player].referrer != address(0), "Not a registered player");
+
+    // Определяем количество рефералов первой линии
+    uint256 firstLineReferralCount = getFirstLineReferralCount(_player);
+    
+    // Если количество рефералов больше, чем минимальное значение для топа
+    if (firstLineReferralCount >= topReferralRank) {
+        // Рассчитываем надбавку
+        uint256 bonusAmount = (players[_player].referralEarnings * referralBonusPercentage) / 100;
+
+        // Проверяем, достаточно ли средств в `reserveBudget` для надбавки
+        require(reserveBudget >= bonusAmount, "Insufficient reserve budget for bonus");
+
+        // Вычитаем средства из `contractBudget` и добавляем к реферальным заработкам
+        reserveBudget -= bonusAmount;
+        players[_player].referralEarnings += bonusAmount;
+    }
+    _;
+    }
 
     // //////////////////////////////////////////////////////////////////////
 
@@ -331,46 +311,43 @@
     address referrer = player.referrer;
 
     if (player.depositIndex == 0) {
-        // Если это первый депозит, проверяем, может ли реферер его оплатить
-        if (canSponsorFirstDeposit[referrer] && players[referrer].referralEarnings >= depositAmount) {
-            // Реферер оплачивает первый депозит из своих реферальных заработков
-            players[referrer].referralEarnings -= depositAmount;
-        } else {
-            // Игрок сам оплачивает первый депозит
-            require(balanceOf[msg.sender] >= depositAmount, "Insufficient token balance");
-            balanceOf[msg.sender] -= depositAmount;
-        }
-
-        // Если это первый депозит и игрок попадает в число пользователей с бесплатным депозитом
-        if (freeDepositsCount < maxFreeUsers) {
-            freeDepositsCount++;
-        }
-
+    // Если это первый депозит, проверяем, может ли реферер его оплатить
+    if (canSponsorFirstDeposit[referrer] && players[referrer].referralEarnings >= depositAmount) {
+        // Реферер оплачивает первый депозит из своих реферальных заработков
+        players[referrer].referralEarnings -= depositAmount;
     } else {
-        // Для последующих депозитов игрок сам платит
-        require(balanceOf[msg.sender] >= depositAmount, "Insufficient token balance");
-        balanceOf[msg.sender] -= depositAmount;
+        // Игрок сам оплачивает первый депозит
+        require(balanceOf(msg.sender) >= depositAmount, "Insufficient token balance");
+        _transfer(msg.sender, address(this), depositAmount); // Перевод токенов на баланс контракта
     }
 
-    // Переводим депозит на баланс контракта
-    balanceOf[address(this)] += depositAmount;
+    // Если это первый депозит и игрок попадает в число пользователей с бесплатным депозитом
+    if (freeDepositsCount < maxFreeUsers) {
+        freeDepositsCount++;
+    }
+
+    } else {
+    // Для последующих депозитов игрок сам платит
+    require(balanceOf(msg.sender) >= depositAmount, "Insufficient token balance");
+    _transfer(msg.sender, address(this), depositAmount); // Перевод токенов на баланс контракта
+    }
 
     // Рассчёт комиссии контракта
-    contractEarnings += (depositAmount * contractCommission) / 10000; // 0.5%
+    contractEarnings += (depositAmount * contractCommission) / 10000; // 0.7%
 
     // Рассчёт реферальных комиссий
-    uint256 firstLineReferralFee = (depositAmount * firstLineReferralCommission) / 10000;  // 0.4% от депозита
+    uint256 firstLineReferralFee = (depositAmount * firstLineReferralCommission) / 10000;  // 0.7% от депозита
     uint256 secondLineReferralFee = 0;
 
     // Если есть реферер, начисляем ему и его рефереру реферальные вознаграждения
     if (referrer != address(0)) {
-        // Начисляем 0.4% с первой линии
+        // Начисляем 0.7% с первой линии
         players[referrer].referralEarnings += firstLineReferralFee;
 
         // Проверяем, есть ли у реферера свой реферер (вторая линия)
         address secondLineReferrer = players[referrer].referrer;
         if (secondLineReferrer != address(0)) {
-            // Начисляем 0.3% со второй линии
+            // Начисляем 0.5% со второй линии
             secondLineReferralFee = (depositAmount * secondLineReferralCommission) / 10000;
             players[secondLineReferrer].referralEarnings += secondLineReferralFee;
         }
@@ -392,7 +369,7 @@
 
     // Устанавливаем время ожидания для следующей выплаты
     player.nextPayoutAttemptTime = block.timestamp + payoutAttemptInterval;
-}
+    }
 
 
 
@@ -435,7 +412,7 @@
     
 
 
-
+    // ///////////////
     function reduceWaitingTime(Player storage player) internal {
     uint256 currentTime = block.timestamp;
     if (player.nextPayoutAttemptTime > currentTime + minWaitingTime) {
@@ -444,13 +421,13 @@
         player.nextPayoutAttemptTime = currentTime + minWaitingTime;
     }
     }
-
+    // ///////////////
 
     
 
 
 
-    function processPayments() internal nonReentrant onlyPlayer {
+   function processPayments() internal nonReentrant onlyPlayer {
     Player storage player = players[msg.sender];
 
     // Проверяем, что игрок внёс депозит и ещё не получил выплату
@@ -460,8 +437,7 @@
     // Рассчитываем сумму выплаты
     uint256 payout = player.deposit * payoutMultiplier / 100;
 
-   
-   // Получаем количество игроков с депозитами и ожидающих выплату
+    // Получаем количество игроков с депозитами и ожидающих выплату
     uint256 playersWithDepositsCount = countPlayersWithDeposits(player.depositIndex);
     uint256 playersWaitingForPayoutCount = countPlayersWaitingForPayout(player.depositIndex);
 
@@ -483,8 +459,9 @@
             // Выплата из резервного бюджета
             require(reserveBudget >= payout, "Insufficient reserve budget");
             reserveBudget -= payout;
-            balanceOf[msg.sender] += payout; // Добавляем выплату к балансу игрока
-            emit Transfer(address(this), msg.sender, payout); // Логируем событие перевода токенов
+
+            // Перевод средств из резервного бюджета на баланс игрока
+            _transfer(address(this), msg.sender, payout); // Перевод средств
             emit ReservePaymentMade(msg.sender, payout);
         } else {
             // Проверяем, достаточно ли средств в бюджете депозита для обычной выплаты
@@ -492,8 +469,7 @@
 
             // Выплачиваем игроку из бюджета депозита
             depositBudgets[player.depositIndex] -= payout;
-            balanceOf[msg.sender] += payout; // Добавляем выплату к балансу игрока
-            emit Transfer(address(this), msg.sender, payout); // Логируем событие перевода токенов
+            _transfer(address(this), msg.sender, payout); // Перевод средств
             emit ReceivedPayment(msg.sender, payout);
         }
 
@@ -503,8 +479,7 @@
         // Выплата происходит из бюджета депозита для всех остальных случаев
         require(depositBudgets[player.depositIndex] >= payout, "Insufficient deposit budget");
         depositBudgets[player.depositIndex] -= payout;
-        balanceOf[msg.sender] += payout; // Добавляем выплату к балансу игрока
-        emit Transfer(address(this), msg.sender, payout); // Логируем событие перевода токенов
+        _transfer(address(this), msg.sender, payout); // Перевод средств из бюджета депозита на баланс игрока
         emit ReceivedPayment(msg.sender, payout);
 
         // Увеличиваем количество успешных выплат для текущего депозита
@@ -515,9 +490,6 @@
     player.madeDeposit = false;
     player.receivedPayout = true;
 
-
-
-
     // Переход на следующий депозит
     if (player.depositIndex < depositAmounts.length - 1) {
         player.depositIndex += 1;
@@ -527,7 +499,9 @@
     }
 
 
-    
+
+
+    // //////////////////
      
       function countPlayersWithDeposits(uint256 depositIndex) internal view returns (uint256) {
     uint256 count = 0;
@@ -538,7 +512,7 @@
     }
     return count;
     }
-
+    // /////
     function countPlayersWaitingForPayout(uint256 depositIndex) internal view returns (uint256) {
     uint256 count = 0;
     for (uint256 i = 0; i < playersArray.length; i++) {  // playersArray — массив всех игроков
@@ -548,8 +522,8 @@
     }
     return count;
     }
-
-
+    // ////////////////////
+    
 
     // //////////////////////////////////////////////////////////
 
@@ -562,8 +536,7 @@
     canSponsorFirstDeposit[msg.sender] = !canSponsorFirstDeposit[msg.sender];
     }
 
-
-    // Функция для вывода реферальных заработков
+    // ////////////////////////
     function withdrawReferralEarnings() external nonReentrant onlyPlayer {
     Player storage player = players[msg.sender];
     uint256 amount = player.referralEarnings;
@@ -571,8 +544,42 @@
     // Проверяем, что есть реферальные заработки для вывода
     require(amount > 0, "No referral earnings to withdraw");
 
-    // Присваиваем сумму заработков переменной для вывода
-    uint256 withdrawalAmount = amount;
+    // Получаем адрес реферера
+    address referrer = player.referrer;
+
+    // Проверяем, входит ли текущий игрок в топ-1000 по количеству рефералов первой линии
+    uint256 firstLineReferralCount = getFirstLineReferralCount(msg.sender);
+    if (firstLineReferralCount >= topReferralRank) {
+        // Рассчитываем бонус для игрока (например, 10% от текущей суммы)
+        uint256 bonusAmount = (amount * referrerBonusPercentage) / 100;
+
+        // Проверяем, что резервный бюджет контракта может покрыть этот бонус
+        require(reserveBudget >= bonusAmount, "Insufficient reserve budget for bonus");
+
+        // Увеличиваем реферальные заработки игрока на бонус
+        amount += bonusAmount;
+
+        // Списываем бонус из резервного бюджета
+        reserveBudget -= bonusAmount;
+
+        // Логируем начисление бонуса
+        emit Transfer(address(this), msg.sender, bonusAmount);
+    }
+
+    // Рассчитываем процент для реферера (10% от новой суммы, включая бонус), если реферер существует
+    uint256 bonusToReferrer = 0;
+    if (referrer != address(0)) {
+        bonusToReferrer = (amount * referrerBonusPercentage) / 100;
+
+        // Переводим бонус на внутренний реферальный счёт реферера
+        players[referrer].referralEarnings += bonusToReferrer;
+
+        // Логируем событие перевода бонуса рефереру
+        emit Transfer(address(this), referrer, bonusToReferrer);
+    }
+
+    // Вычитаем бонус для реферера из общей суммы, которую получит игрок, если реферер есть
+    uint256 withdrawalAmount = amount - bonusToReferrer;
 
     // Обновляем данные о выводе для игрока
     player.referralWithdrawals += withdrawalAmount;
@@ -587,13 +594,30 @@
     // Логируем событие вывода реферальных средств
     emit ReferralWithdrawalMade(msg.sender, withdrawalAmount);
 
-    // Отправляем реферальные заработки в виде токенов рефереру
-    balanceOf[msg.sender] += withdrawalAmount; // Добавляем реферальные заработки к балансу реферера
-    emit Transfer(address(this), msg.sender, withdrawalAmount); // Логируем событие перевода токенов
+    // Переводим оставшиеся реферальные заработки игроку
+    _transfer(address(this), msg.sender, withdrawalAmount);
+    emit Transfer(address(this), msg.sender, withdrawalAmount);
     }
 
 
 
+
+
+
+
+    // //////////
+    function getFirstLineReferralCount(address _player) public view returns (uint256) {
+    uint256 count = 0;
+    for (uint256 i = 0; i < playersArray.length; i++) {
+        if (players[playersArray[i]].referrer == _player) {
+            count++;
+        }
+    }
+    return count; 
+    }
+    // ////////////
+
+    
     // Функция для вывода заработка владельцем контракта
     function withdrawOwnerEarnings() external nonReentrant onlyOwner {
     // Проверяем, что есть заработанные токены для вывода
@@ -603,13 +627,12 @@
     uint256 withdrawalAmount = contractEarnings;
 
     // Переводим токены владельцу
-    balanceOf[owner] += withdrawalAmount; // Добавляем заработки к балансу владельца
-
+    _transfer(address(this), super.owner(), withdrawalAmount);
     // Обнуляем контрактные заработки
     contractEarnings = 0;
 
     // Логируем событие вывода
-    emit Transfer(address(this), owner, withdrawalAmount); // Логируем событие перевода токенов
+    emit Transfer(address(this), super.owner(), withdrawalAmount); // Логируем событие перевода токенов
      }
     
     
@@ -631,12 +654,12 @@
     reductionAmount = newReductionAmount;
     }
     
-
+    
     function setPayoutMultiplier(uint256 newPayoutMultiplier) external onlyOwner {
     require(newPayoutMultiplier > 100, "Multiplier must be greater than 100"); // Можно установить минимальное ограничение
     payoutMultiplier = newPayoutMultiplier;
     }
-
+    
 
     // Функция для изменения коэффициента, доступная только владельцу контракта
     function setRatioMultiplier(uint256 _newMultiplier) external onlyOwner {
@@ -689,7 +712,23 @@
     secondLineReferralCommission = newCommission;
     }
 
-    // ///////////////////////////////////////////////////////////
+     
+
+    function setTopReferralParameters(uint256 _topReferralRank, uint256 _referralBonusPercentage) external onlyOwner {
+    require(_topReferralRank > 0, "Top referral rank must be greater than 0");
+    require(_referralBonusPercentage >= 0, "Bonus percentage must be positive");
+    topReferralRank = _topReferralRank;
+    referralBonusPercentage = _referralBonusPercentage;
+    }
+
+    
+    function setReferrerBonusPercentage(uint256 _newPercentage) external onlyOwner {
+    require(_newPercentage >= 0 && _newPercentage <= 100, "Bonus percentage must be between 0 and 100");
+    referrerBonusPercentage = _newPercentage;
+    }
+    
+
+   // ///////////
 
     // Функция для изменения адреса внешнего контракта
     function setExternalContract(address _newExternalContract) external onlyOwner {
@@ -699,7 +738,7 @@
 
 
 
-
+    
     // ////////////////////////////////////////////////////////////////////
 
      
@@ -740,7 +779,11 @@
     }
 
     
+    // //////////////////////////////////////////////////////
 
+
+
+    
 
 
     // //////////////////////////////////////////////////////
