@@ -31,7 +31,7 @@
    uint256 public payoutAttemptInterval = 90 hours;  // Интервал между выплатами
    uint256 public minWaitingTime = 30 hours; // Минимальное время ожидания
    uint256 public reductionAmount = 30 hours; // Величина уменьшения времени
-   uint256 public topReferrerRank = 1000; // Количество топовых рефералов, которые получают надбавку
+   uint256 public topReferrerRank = 1000; // Количество топовых рефереров, которые получают надбавку
    uint256 public referralBonusPercentage = 10; // Процент надбавки к реферальным средствам
    uint256 public referrerBonusPercentage = 10; // Процент бонуса для реферера 
 
