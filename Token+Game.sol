@@ -1,4 +1,4 @@
-   // SPDX-License-Identifier: MIT
+       // SPDX-License-Identifier: MIT
    pragma solidity ^0.8.27;
 
    import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -93,11 +93,8 @@
     modifier topReferralModifier(address _player) {
     require(players[_player].referrer != address(0), "Not a registered player");
 
-    // Определяем количество рефералов первой линии для текущего игрока
-    uint256 firstLineReferralCount = getFirstLineReferralCount(_player);
-
     // Проверяем, что игрок входит в топ-1000 по количеству рефералов на первой линии
-    if (firstLineReferralCount >= topReferrerRank) {
+    if (isTopReferrer(_player)) {
         // Рассчитываем бонус, который игрок получит за нахождение в топе
         uint256 bonusAmount = (players[_player].referralEarnings * referralBonusPercentage) / 100;
 
@@ -116,6 +113,7 @@
 
     _;
     }
+
 
 
     // //////////////////////////////////////////////////////////////////////
@@ -594,6 +592,7 @@
 
 
 
+
     // //////////
     function getFirstLineReferralCount(address _player) public view returns (uint256) {
     uint256 count = 0;
@@ -606,7 +605,29 @@
     }
     // ////////////
 
+
+    // Функция для проверки, входит ли игрок в топ-1000 по количеству рефералов первой линии
+    function isTopReferrer(address _player) public view returns (bool) {
+    uint256 playerReferralCount = getFirstLineReferralCount(_player);
+
+    // Считаем количество игроков, у которых больше рефералов на первой линии
+    uint256 referrersAbove = 0;
+    for (uint256 i = 0; i < playersArray.length; i++) {
+        if (getFirstLineReferralCount(playersArray[i]) > playerReferralCount) {
+            referrersAbove++;
+        }
+    }
+
+    // Если количество рефереров выше текущего игрока меньше предела, то игрок входит в топ
+    return referrersAbove < topReferrerRank;
+    }
+    // /////////
+
     
+
+
+
+
     // Функция для вывода заработка владельцем контракта
     function withdrawOwnerEarnings() external nonReentrant onlyOwner {
     // Проверяем, что есть заработанные токены для вывода
@@ -714,7 +735,10 @@
     referralBonusPercentage = _referralBonusPercentage;
     }
 
-    
+    function updateTopReferrerRank(uint256 _topReferrerRank) external onlyOwner {
+    topReferrerRank = _topReferrerRank;
+    }
+
     function setReferrerBonusPercentage(uint256 _newPercentage) external onlyOwner {
     require(_newPercentage >= 0 && _newPercentage <= 100, "Bonus percentage must be between 0 and 100");
     referrerBonusPercentage = _newPercentage;
