@@ -1,4 +1,4 @@
-        // SPDX-License-Identifier: MIT
+   // SPDX-License-Identifier: MIT
    pragma solidity ^0.8.27;
 
    import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -561,22 +561,6 @@
     _transfer(address(this), msg.sender, withdrawalAmount);
     emit Transfer(address(this), msg.sender, withdrawalAmount);
     }
-
-
-
-
-
-    // //////////
-    function getFirstLineReferralCount(address _player) public view returns (uint256) {
-    uint256 count = 0;
-    for (uint256 i = 0; i < playersArray.length; i++) {
-        if (players[playersArray[i]].referrer == _player) {
-            count++;
-        }
-    }
-    return count; 
-    }
-    // ////////////
 
 
     
