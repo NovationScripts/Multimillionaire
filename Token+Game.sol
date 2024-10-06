@@ -1,4 +1,4 @@
-   // SPDX-License-Identifier: MIT
+ // SPDX-License-Identifier: MIT
    pragma solidity ^0.8.27;
 
    import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -573,7 +573,22 @@
     // ////////////////////////////////////////////////////
 
 
+    // Функция для пополнения резервного бюджета с burn
+    function addToReserveWithBurn(uint256 amount) external {
+    require(amount > 0, "Amount must be greater than zero");
+    require(balanceOf(msg.sender) >= amount, "Insufficient balance");
 
+    // Сжигаем токены пользователя, уменьшая общее количество в обращении
+    _burn(msg.sender, amount);
+
+    // Увеличиваем резервный бюджет, который отражается только в контракте (виртуально)
+    reserveBudget += amount;
+
+    // Логируем событие пополнения резервного бюджета
+    emit ReserveBudgetBurned(msg.sender, amount);
+    }
+
+    
 
     function changePayoutAttemptTime(uint256 newInterval) public onlyOwner {
     payoutAttemptInterval = newInterval;
@@ -709,6 +724,7 @@
      event ReservePaymentMade(address indexed player, uint256 amount); // Вызов при выплате из резервного бюджета
      event OwnerWithdrawal(address indexed owner, uint256 withdrawalAmount); // Triggered when the owner withdraws funds
      event ReferralWithdrawalMade(address indexed referrer, uint256 amount); // Triggered when a referrer successfully withdraws referral earnings
+     event ReserveBudgetBurned(address indexed from, uint256 amount); // Событие для логирования пополнения резервного бюджета через сжигание
      // Остальное логирование ...
     
     
